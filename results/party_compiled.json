@@ -1,0 +1,50 @@
+{
+  "event": {
+    "time": "2025-10-12 19:37:32.583071",
+    "location": [
+      200.0,
+      150.0
+    ],
+    "invitees": [
+      2,
+      3
+    ]
+  },
+  "attendees": [
+    {
+      "agent_id": 2,
+      "agent_name": "Alice",
+      "arrival_time": "2025-10-12 19:22:32.583438",
+      "distance_from_party": 34.164569556348944
+    },
+    {
+      "agent_id": 3,
+      "agent_name": "Bob",
+      "arrival_time": "2025-10-12 19:22:32.583438",
+      "distance_from_party": 27.901625258112038
+    }
+  ],
+  "use_compiled": true,
+  "scenario_name": "party_compiled",
+  "start_time": "2025-10-12T19:22:32.583071",
+  "duration_minutes": 30.030425583333333,
+  "tick_count": 590,
+  "agent_plans": {
+    "1": {
+      "name": "Maria",
+      "plan": "07:30 PM - 08:30 PM: Meet Alice at the local park (192, 112) for a casual conversation and get-to-know-you session. This will allow the agent to build a stronger connection with Alice and potentially expand its social network in the neighborhood.\n\n08:30 PM - 09:30 PM: Attend a local community event (e.g., a neighborhood potluck or game night) to meet new people and potentially build relationships with others in the area.\n\n09:30 PM - 10:30 PM: Follow up with Alice and other new connections made at the community event to continue building relationships and expanding the agent's social network.",
+      "plan_last_updated": "2025-10-12T19:28:32.843911"
+    },
+    "2": {
+      "name": "Alice",
+      "plan": "07:37 PM - 09:00 PM: Attend the party at location (200, 150) to build relationships and potentially meet new people.\n08:00 PM - 08:30 PM: Arrive at the party location and mingle with guests to build connections and establish a presence.\n08:30 PM - 09:00 PM: Engage in conversations with guests and explore potential relationships.",
+      "plan_last_updated": "2025-10-12T19:28:32.843911"
+    },
+    "3": {
+      "name": "Bob",
+      "plan": "07:30 PM - 09:00 PM: Work on research project at location (227, 248). Focus on data analysis and note-taking.\n09:00 PM - 09:30 PM: Take a short break to refresh and recharge.\n09:30 PM - 10:00 PM: Review research progress and make notes for the next day.\n10:00 PM - 10:37 PM: Attend Maria's party at location (200, 150). This will be a great opportunity to build relationships and network.",
+      "plan_last_updated": "2025-10-12T19:28:32.843911"
+    }
+  },
+  "event_coherence": 0.0
+}

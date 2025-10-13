@@ -1,0 +1,8 @@
+{
+  "event_coherence": 1.0,
+  "attendance": [
+    "Alice",
+    "Bob"
+  ],
+  "total_agents": 2
+}

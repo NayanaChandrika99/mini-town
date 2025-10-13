@@ -1,0 +1,25 @@
+{
+  "uncompiled": {
+    "duration_minutes": 5.066770316666666,
+    "tick_count": 44,
+    "observation_count": 26,
+    "reflection_count": 4,
+    "obs_per_min": 5.131473971590036,
+    "reflect_per_min": 0.7894575340907747,
+    "avg_latency_ms": 1336.5
+  },
+  "compiled": {
+    "duration_minutes": 20.475853916666665,
+    "tick_count": 11,
+    "observation_count": 0,
+    "reflection_count": 0,
+    "obs_per_min": 0.0,
+    "reflect_per_min": 0.0,
+    "avg_latency_ms": 2251.0
+  },
+  "improvements": {
+    "obs_rate_delta": -5.131473971590036,
+    "reflect_rate_delta": -0.7894575340907747,
+    "latency_delta_ms": 914.5
+  }
+}

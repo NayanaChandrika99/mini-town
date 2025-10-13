@@ -1,0 +1,376 @@
+{
+  "version": "1.0",
+  "created": "2025-10-11",
+  "description": "Importance scoring seeds for ScoreImportance DSPy module compilation",
+  "total_seeds": 40,
+  "categories": {
+    "social": 8,
+    "environmental": 6,
+    "goal_relevant": 8,
+    "emotional": 6,
+    "mundane": 6,
+    "edge_cases": 6
+  },
+  "seeds": [
+    {
+      "id": 1,
+      "observation": "Alice invited me to a party at 7pm tonight",
+      "agent_goal": "Build relationships in the neighborhood",
+      "agent_personality": "social, optimistic",
+      "gold_score": 8,
+      "rationale": "Direct invitation to social event aligns perfectly with relationship-building goal. Time-sensitive and requires planning.",
+      "category": "social"
+    },
+    {
+      "id": 2,
+      "observation": "Bob said he's too busy to attend the gathering",
+      "agent_goal": "Build relationships in the neighborhood",
+      "agent_personality": "social, optimistic",
+      "gold_score": 5,
+      "rationale": "Relevant information about friend's availability. Worth remembering for future event planning but not immediately actionable.",
+      "category": "social"
+    },
+    {
+      "id": 3,
+      "observation": "Carol complimented my gardening skills",
+      "agent_goal": "Maintain community garden",
+      "agent_personality": "organized, punctual",
+      "gold_score": 6,
+      "rationale": "Positive social feedback related to primary goal. Builds relationship and validates work. Memorable but not urgent.",
+      "category": "social"
+    },
+    {
+      "id": 4,
+      "observation": "Dave suggested we start a neighborhood watch program",
+      "agent_goal": "Make every day an adventure",
+      "agent_personality": "impulsive, friendly",
+      "gold_score": 7,
+      "rationale": "New adventure opportunity aligned with spontaneous personality. Actionable and socially engaging.",
+      "category": "social"
+    },
+    {
+      "id": 5,
+      "observation": "Eve mentioned she's new to the neighborhood",
+      "agent_goal": "Document neighborhood stories",
+      "agent_personality": "curious, detail-oriented",
+      "gold_score": 7,
+      "rationale": "Perfect opportunity for documentation goal. New resident likely has fresh perspective and stories to share.",
+      "category": "social"
+    },
+    {
+      "id": 6,
+      "observation": "Someone spread a rumor about me at the coffee shop",
+      "agent_goal": "Build relationships in the neighborhood",
+      "agent_personality": "social, optimistic",
+      "gold_score": 8,
+      "rationale": "Social threat requiring attention. Could damage relationship-building efforts. Needs addressing soon.",
+      "category": "social"
+    },
+    {
+      "id": 7,
+      "observation": "The neighbors are planning a block party next weekend",
+      "agent_goal": "Build relationships in the neighborhood",
+      "agent_personality": "social, optimistic",
+      "gold_score": 7,
+      "rationale": "Major social opportunity aligned with goal. Not immediate but important to mark calendar and prepare.",
+      "category": "social"
+    },
+    {
+      "id": 8,
+      "observation": "Alice thanked me for helping her yesterday",
+      "agent_goal": "Build relationships in the neighborhood",
+      "agent_personality": "social, optimistic",
+      "gold_score": 6,
+      "rationale": "Positive relationship reinforcement. Confirms helpful behavior strengthens bonds. Worth remembering.",
+      "category": "social"
+    },
+    {
+      "id": 9,
+      "observation": "The grass is green today",
+      "agent_goal": "Complete research project on local history",
+      "agent_personality": "analytical, introverted",
+      "gold_score": 1,
+      "rationale": "Completely irrelevant environmental detail. No connection to research goal or personality. Pure background noise.",
+      "category": "mundane"
+    },
+    {
+      "id": 10,
+      "observation": "A clock is ticking in the background",
+      "agent_goal": "Maintain community garden",
+      "agent_personality": "organized, punctual",
+      "gold_score": 2,
+      "rationale": "Ambient sound with no actionable value. Even for punctual personality, not meaningful information.",
+      "category": "mundane"
+    },
+    {
+      "id": 11,
+      "observation": "The sky is blue and cloudless",
+      "agent_goal": "Document neighborhood stories",
+      "agent_personality": "curious, detail-oriented",
+      "gold_score": 2,
+      "rationale": "Generic weather observation. Not story-worthy or memorable. Too common to document.",
+      "category": "mundane"
+    },
+    {
+      "id": 12,
+      "observation": "Someone's phone buzzed far away",
+      "agent_goal": "Make every day an adventure",
+      "agent_personality": "impulsive, friendly",
+      "gold_score": 1,
+      "rationale": "Irrelevant ambient noise. Not related to adventures or social opportunities.",
+      "category": "mundane"
+    },
+    {
+      "id": 13,
+      "observation": "The streetlight turned on at dusk",
+      "agent_goal": "Build relationships in the neighborhood",
+      "agent_personality": "social, optimistic",
+      "gold_score": 2,
+      "rationale": "Normal environmental event with no social implications. Expected behavior, not noteworthy.",
+      "category": "mundane"
+    },
+    {
+      "id": 14,
+      "observation": "A bird chirped in the distance",
+      "agent_goal": "Complete research project on local history",
+      "agent_personality": "analytical, introverted",
+      "gold_score": 1,
+      "rationale": "Background nature sound. Completely unrelated to historical research.",
+      "category": "mundane"
+    },
+    {
+      "id": 15,
+      "observation": "Fire alarm going off in the building!",
+      "agent_goal": "Complete research project on local history",
+      "agent_personality": "analytical, introverted",
+      "gold_score": 10,
+      "rationale": "Immediate safety emergency requiring evacuation. Overrides all other priorities regardless of goal or personality.",
+      "category": "emotional"
+    },
+    {
+      "id": 16,
+      "observation": "Alice just announced she's getting married",
+      "agent_goal": "Build relationships in the neighborhood",
+      "agent_personality": "social, optimistic",
+      "gold_score": 9,
+      "rationale": "Major life event of close friend. Critical for relationship maintenance. Requires celebration and support response.",
+      "category": "emotional"
+    },
+    {
+      "id": 17,
+      "observation": "I just received devastating news about a family member",
+      "agent_goal": "Maintain community garden",
+      "agent_personality": "organized, punctual",
+      "gold_score": 10,
+      "rationale": "Personal crisis requiring immediate attention. All other goals become secondary to processing and responding.",
+      "category": "emotional"
+    },
+    {
+      "id": 18,
+      "observation": "Someone is calling for help in the park",
+      "agent_goal": "Make every day an adventure",
+      "agent_personality": "impulsive, friendly",
+      "gold_score": 9,
+      "rationale": "Emergency situation requiring immediate response. Moral imperative overrides other activities.",
+      "category": "emotional"
+    },
+    {
+      "id": 19,
+      "observation": "I feel extremely proud of my recent accomplishment",
+      "agent_goal": "Complete research project on local history",
+      "agent_personality": "analytical, introverted",
+      "gold_score": 7,
+      "rationale": "Significant positive emotion related to goal achievement. Worth savoring and potentially sharing with close contacts.",
+      "category": "emotional"
+    },
+    {
+      "id": 20,
+      "observation": "Bob seems upset and withdrawn today",
+      "agent_goal": "Build relationships in the neighborhood",
+      "agent_personality": "social, optimistic",
+      "gold_score": 7,
+      "rationale": "Friend in distress. Aligned with relationship goal to check in and offer support. Time-sensitive before situation worsens.",
+      "category": "emotional"
+    },
+    {
+      "id": 21,
+      "observation": "The weather is perfect for gardening today",
+      "agent_goal": "Maintain community garden",
+      "agent_personality": "organized, punctual",
+      "gold_score": 7,
+      "rationale": "Directly enables primary goal with optimal conditions. Time-sensitive as weather may change. Actionable today.",
+      "category": "environmental"
+    },
+    {
+      "id": 22,
+      "observation": "A storm is approaching in the next hour",
+      "agent_goal": "Make every day an adventure",
+      "agent_personality": "impulsive, friendly",
+      "gold_score": 6,
+      "rationale": "Interesting weather event. Could be mini-adventure (storm watching) or practical concern (seek shelter). Moderately relevant.",
+      "category": "environmental"
+    },
+    {
+      "id": 23,
+      "observation": "The library will close in 30 minutes",
+      "agent_goal": "Complete research project on local history",
+      "agent_personality": "analytical, introverted",
+      "gold_score": 8,
+      "rationale": "Critical time constraint for research activities. Immediate action needed if planning to use library resources today.",
+      "category": "environmental"
+    },
+    {
+      "id": 24,
+      "observation": "It's getting dark outside",
+      "agent_goal": "Document neighborhood stories",
+      "agent_personality": "curious, detail-oriented",
+      "gold_score": 4,
+      "rationale": "Time-of-day awareness. Might affect outdoor documentation activities but not urgent or highly impactful.",
+      "category": "environmental"
+    },
+    {
+      "id": 25,
+      "observation": "The community garden gate is broken",
+      "agent_goal": "Maintain community garden",
+      "agent_personality": "organized, punctual",
+      "gold_score": 8,
+      "rationale": "Direct problem affecting primary goal. Security and access issue requiring prompt repair action.",
+      "category": "environmental"
+    },
+    {
+      "id": 26,
+      "observation": "The coffee shop is unusually crowded today",
+      "agent_goal": "Build relationships in the neighborhood",
+      "agent_personality": "social, optimistic",
+      "gold_score": 5,
+      "rationale": "Potential social opportunity (many people) but also practical concern (long wait). Moderately relevant context.",
+      "category": "environmental"
+    },
+    {
+      "id": 27,
+      "observation": "Found a rare book about neighborhood history at the bookstore",
+      "agent_goal": "Complete research project on local history",
+      "agent_personality": "analytical, introverted",
+      "gold_score": 9,
+      "rationale": "Perfect resource directly enabling primary goal. Rare find suggests urgency to acquire before someone else does.",
+      "category": "goal_relevant"
+    },
+    {
+      "id": 28,
+      "observation": "Carol mentioned she knows about old neighborhood families",
+      "agent_goal": "Document neighborhood stories",
+      "agent_personality": "curious, detail-oriented",
+      "gold_score": 8,
+      "rationale": "Excellent source for documentation goal. Personal connection to local knowledge holder. Should follow up soon.",
+      "category": "goal_relevant"
+    },
+    {
+      "id": 29,
+      "observation": "The garden's soil quality test results arrived",
+      "agent_goal": "Maintain community garden",
+      "agent_personality": "organized, punctual",
+      "gold_score": 7,
+      "rationale": "Critical data for garden maintenance decisions. Directly informs fertilizing and planting strategies.",
+      "category": "goal_relevant"
+    },
+    {
+      "id": 30,
+      "observation": "Dave mentioned an underground music show happening tonight",
+      "agent_goal": "Make every day an adventure",
+      "agent_personality": "impulsive, friendly",
+      "gold_score": 8,
+      "rationale": "Perfect adventure opportunity for spontaneous personality. Time-sensitive (tonight) and aligns with excitement-seeking goal.",
+      "category": "goal_relevant"
+    },
+    {
+      "id": 31,
+      "observation": "Alice is organizing a book club starting next month",
+      "agent_goal": "Build relationships in the neighborhood",
+      "agent_personality": "social, optimistic",
+      "gold_score": 7,
+      "rationale": "Recurring social opportunity aligned with relationship goal. Not immediate but worth committing to for regular interaction.",
+      "category": "goal_relevant"
+    },
+    {
+      "id": 32,
+      "observation": "The historical society is seeking volunteers",
+      "agent_goal": "Complete research project on local history",
+      "agent_personality": "analytical, introverted",
+      "gold_score": 8,
+      "rationale": "Direct access to research resources and fellow historians. Strategic opportunity to advance project through volunteering.",
+      "category": "goal_relevant"
+    },
+    {
+      "id": 33,
+      "observation": "Eve is writing an article about local landmarks",
+      "agent_goal": "Document neighborhood stories",
+      "agent_personality": "curious, detail-oriented",
+      "gold_score": 7,
+      "rationale": "Potential collaboration opportunity. Could share research and benefit from her perspective on documentation.",
+      "category": "goal_relevant"
+    },
+    {
+      "id": 34,
+      "observation": "Someone suggested starting a neighborhood composting program",
+      "agent_goal": "Maintain community garden",
+      "agent_personality": "organized, punctual",
+      "gold_score": 7,
+      "rationale": "Directly benefits garden maintenance through improved soil. Organizational opportunity aligned with personality.",
+      "category": "goal_relevant"
+    },
+    {
+      "id": 35,
+      "observation": "Bob mentioned he likes coffee but we're at a tea shop",
+      "agent_goal": "Build relationships in the neighborhood",
+      "agent_personality": "social, optimistic",
+      "gold_score": 4,
+      "rationale": "Minor preference information. Interesting but context makes it non-actionable right now. Low priority memory.",
+      "category": "edge_cases"
+    },
+    {
+      "id": 36,
+      "observation": "Someone said 'nice weather' while passing by",
+      "agent_goal": "Make every day an adventure",
+      "agent_personality": "impulsive, friendly",
+      "gold_score": 3,
+      "rationale": "Polite greeting with no substance. Friendly personality might engage but no adventure opportunity. Borderline mundane.",
+      "category": "edge_cases"
+    },
+    {
+      "id": 37,
+      "observation": "I overheard Carol and Dave arguing about politics",
+      "agent_goal": "Build relationships in the neighborhood",
+      "agent_personality": "social, optimistic",
+      "gold_score": 6,
+      "rationale": "Socially sensitive situation. Might indicate tension requiring mediation. Worth monitoring but not intervening immediately.",
+      "category": "edge_cases"
+    },
+    {
+      "id": 38,
+      "observation": "The local newspaper mentioned the neighborhood but not specifically my area",
+      "agent_goal": "Document neighborhood stories",
+      "agent_personality": "curious, detail-oriented",
+      "gold_score": 5,
+      "rationale": "Tangentially relevant. Could provide broader context but not directly about documentation subject. Mild interest.",
+      "category": "edge_cases"
+    },
+    {
+      "id": 39,
+      "observation": "Alice might be moving but she hasn't confirmed anything",
+      "agent_goal": "Build relationships in the neighborhood",
+      "agent_personality": "social, optimistic",
+      "gold_score": 6,
+      "rationale": "Potentially significant but unconfirmed rumor. Worth remembering to ask about gently. Uncertain action required.",
+      "category": "edge_cases"
+    },
+    {
+      "id": 40,
+      "observation": "I found an old photo but can't tell if it's from this neighborhood",
+      "agent_goal": "Complete research project on local history",
+      "agent_personality": "analytical, introverted",
+      "gold_score": 6,
+      "rationale": "Potentially valuable primary source but ambiguous. Requires investigation to confirm relevance. Medium priority.",
+      "category": "edge_cases"
+    }
+  ]
+}

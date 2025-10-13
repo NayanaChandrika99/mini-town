@@ -1,0 +1,59 @@
+{
+  "scenario_name": "compiled_gepa",
+  "use_compiled": true,
+  "start_time": "2025-10-12T00:41:51.967359",
+  "duration_minutes": 20.475853916666665,
+  "tick_count": 11,
+  "observation_count": 0,
+  "reflection_count": 0,
+  "agents": [
+    {
+      "id": 1,
+      "name": "Alice",
+      "final_position": {
+        "x": 229.38740192846274,
+        "y": 104.25788273360064
+      },
+      "memory_count": 0,
+      "reflection_sum": 0.0
+    },
+    {
+      "id": 2,
+      "name": "Bob",
+      "final_position": {
+        "x": 195.11551250694964,
+        "y": 129.62134003581525
+      },
+      "memory_count": 0,
+      "reflection_sum": 0.0
+    },
+    {
+      "id": 3,
+      "name": "Carol",
+      "final_position": {
+        "x": 227.14524260091645,
+        "y": 175.39439362028622
+      },
+      "memory_count": 0,
+      "reflection_sum": 0.0
+    }
+  ],
+  "latency": {
+    "ScoreImportance": {
+      "count": 77,
+      "success_rate": 100.0,
+      "p50_ms": 759,
+      "p95_ms": 10912,
+      "p99_ms": 12006,
+      "mean_ms": 3138
+    },
+    "Reflect": {
+      "count": 4,
+      "success_rate": 100.0,
+      "p50_ms": 1185,
+      "p95_ms": 1894,
+      "p99_ms": 1987,
+      "mean_ms": 1364
+    }
+  }
+}

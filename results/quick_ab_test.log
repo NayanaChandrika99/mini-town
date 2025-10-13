@@ -1,0 +1,81 @@
+2025-10-12 00:20:52,123 - INFO - ======================================================================
+2025-10-12 00:20:52,123 - INFO - RUNNING SCENARIO: uncompiled_baseline
+2025-10-12 00:20:52,123 - INFO - Mode: UNCOMPILED
+2025-10-12 00:20:52,123 - INFO - Duration: 5 minutes
+2025-10-12 00:20:52,123 - INFO - ======================================================================
+2025-10-12 00:20:52,123 - INFO - DSPy configured with Groq LLM (llama-3.1-8b-instant)
+2025-10-12 00:20:52,124 - INFO - Using uncompiled modules
+2025-10-12 00:20:52,124 - INFO - Using uncompiled baseline modules
+2025-10-12 00:20:52,221 - INFO - VSS extension loaded successfully with HNSW persistence enabled
+2025-10-12 00:20:52,235 - INFO - HNSW index created for embeddings
+2025-10-12 00:20:52,236 - INFO - Database schema created successfully
+2025-10-12 00:20:52,236 - INFO - MemoryStore initialized with database at /Users/nainy/Documents/Personal/mini-town/data/test_uncompiled_baseline.db
+2025-10-12 00:20:52,236 - INFO - Initialized test database: /Users/nainy/Documents/Personal/mini-town/data/test_uncompiled_baseline.db
+2025-10-12 00:20:52,236 - INFO - Agent 1 (Alice) initialized at (600.0, 300.0)
+2025-10-12 00:20:52,247 - INFO - Created agent 1: Alice at (600.0, 300.0)
+2025-10-12 00:20:52,248 - INFO - Agent 2 (Bob) initialized at (300.0003064103128, 473.2052576626029)
+2025-10-12 00:20:52,250 - INFO - Created agent 2: Bob at (300.0003064103128, 473.2052576626029)
+2025-10-12 00:20:52,250 - INFO - Agent 3 (Carol) initialized at (299.9993871803133, 126.79527305616887)
+2025-10-12 00:20:52,253 - INFO - Created agent 3: Carol at (299.9993871803133, 126.79527305616887)
+2025-10-12 00:20:52,253 - INFO - Initialized 3 test agents
+2025-10-12 00:20:52,253 - INFO - Starting simulation loop (target: 5 min)...
+2025-10-12 00:21:53,082 - INFO - Tick 30 (1.0 min elapsed)
+2025-10-12 00:22:53,558 - INFO - Tick 60 (2.0 min elapsed)
+2025-10-12 00:23:54,135 - INFO - Tick 90 (3.0 min elapsed)
+2025-10-12 00:24:57,998 - INFO - Tick 120 (4.1 min elapsed)
+2025-10-12 00:25:52,693 - INFO - ✅ Simulation complete: 147 ticks in 5.0 minutes
+2025-10-12 00:25:52,831 - INFO - Database connection closed
+2025-10-12 00:25:52,832 - INFO - Total observations: 0
+2025-10-12 00:25:52,832 - INFO - Total reflections: 0
+2025-10-12 00:25:52,952 - INFO - 💾 Results saved to /Users/nainy/Documents/Personal/mini-town/results/uncompiled_baseline_20251012_002552.json
+2025-10-12 00:25:52,952 - INFO - ======================================================================
+2025-10-12 00:25:52,952 - INFO - RUNNING SCENARIO: compiled_gepa
+2025-10-12 00:25:52,952 - INFO - Mode: COMPILED
+2025-10-12 00:25:52,952 - INFO - Duration: 5 minutes
+2025-10-12 00:25:52,952 - INFO - ======================================================================
+2025/10/12 00:25:53 WARNING dspy.primitives.base_module: There is a mismatch of python version between saved model and current environment. You saved with `python==3.12`, but now you have `python==3.11`. This might cause errors or performance downgrade on the loaded model, please consider loading the model in the same environment as the saving environment.
+2025-10-12 00:25:53,104 - INFO - ✅ Compiled scorer loaded from /Users/nainy/Documents/Personal/mini-town/compiled/compiled_scorer.json
+2025-10-12 00:25:53,104 - INFO - Using compiled modules
+2025-10-12 00:25:53,104 - INFO - ✅ Using compiled modules
+2025-10-12 00:25:53,350 - INFO - VSS extension loaded successfully with HNSW persistence enabled
+2025-10-12 00:25:53,358 - INFO - HNSW index created for embeddings
+2025-10-12 00:25:53,358 - INFO - Database schema created successfully
+2025-10-12 00:25:53,358 - INFO - MemoryStore initialized with database at /Users/nainy/Documents/Personal/mini-town/data/test_compiled_gepa.db
+2025-10-12 00:25:53,358 - INFO - Initialized test database: /Users/nainy/Documents/Personal/mini-town/data/test_compiled_gepa.db
+2025-10-12 00:25:53,360 - INFO - Agent 1 (Alice) initialized at (600.0, 300.0)
+2025-10-12 00:25:53,365 - INFO - Created agent 1: Alice at (600.0, 300.0)
+2025-10-12 00:25:53,365 - INFO - Agent 2 (Bob) initialized at (300.0003064103128, 473.2052576626029)
+2025-10-12 00:25:53,367 - INFO - Created agent 2: Bob at (300.0003064103128, 473.2052576626029)
+2025-10-12 00:25:53,367 - INFO - Agent 3 (Carol) initialized at (299.9993871803133, 126.79527305616887)
+2025-10-12 00:25:53,372 - INFO - Created agent 3: Carol at (299.9993871803133, 126.79527305616887)
+2025-10-12 00:25:53,372 - INFO - Initialized 3 test agents
+2025-10-12 00:25:53,372 - INFO - Starting simulation loop (target: 5 min)...
+2025-10-12 00:26:56,054 - INFO - Tick 30 (1.0 min elapsed)
+2025-10-12 00:27:57,717 - INFO - Tick 60 (2.1 min elapsed)
+2025-10-12 00:28:59,008 - INFO - Tick 90 (3.1 min elapsed)
+2025-10-12 00:29:59,383 - INFO - Tick 120 (4.1 min elapsed)
+2025-10-12 00:30:53,656 - INFO - ✅ Simulation complete: 147 ticks in 5.0 minutes
+2025-10-12 00:30:53,718 - INFO - Database connection closed
+2025-10-12 00:30:53,718 - INFO - Total observations: 0
+2025-10-12 00:30:53,718 - INFO - Total reflections: 0
+2025-10-12 00:30:53,728 - INFO - 💾 Results saved to /Users/nainy/Documents/Personal/mini-town/results/compiled_gepa_20251012_003053.json
+2025-10-12 00:30:53,731 - INFO - 💾 Comparison saved to /Users/nainy/Documents/Personal/mini-town/results/comparison.json
+
+======================================================================
+A/B TEST COMPARISON REPORT
+======================================================================
+
+📊 UNCOMPILED BASELINE:
+  Observations/min:    0.00
+  Reflections/min:     0.00
+  Avg latency:         0 ms
+
+📊 COMPILED (GEPA):
+  Observations/min:    0.00
+  Reflections/min:     0.00
+  Avg latency:         0 ms
+
+🎯 IMPROVEMENTS:
+  Obs rate delta:      +0.00/min
+  Reflect rate delta:  +0.00/min
+======================================================================

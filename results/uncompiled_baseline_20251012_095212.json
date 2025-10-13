@@ -1,0 +1,59 @@
+{
+  "scenario_name": "uncompiled_baseline",
+  "use_compiled": false,
+  "start_time": "2025-10-12T09:47:11.396275",
+  "duration_minutes": 5.011843666666667,
+  "tick_count": 63,
+  "observation_count": 93,
+  "reflection_count": 16,
+  "agents": [
+    {
+      "id": 1,
+      "name": "Alice",
+      "final_position": {
+        "x": 184.45327850030253,
+        "y": 127.13722406527256
+      },
+      "memory_count": 55,
+      "reflection_sum": 0.0
+    },
+    {
+      "id": 2,
+      "name": "Bob",
+      "final_position": {
+        "x": 179.78632366426015,
+        "y": 135.52108184689945
+      },
+      "memory_count": 54,
+      "reflection_sum": 1.5
+    },
+    {
+      "id": 3,
+      "name": "Carol",
+      "final_position": {
+        "x": 218.08301848199068,
+        "y": 228.40169991435673
+      },
+      "memory_count": 0,
+      "reflection_sum": 0.0
+    }
+  ],
+  "latency": {
+    "ScoreImportance": {
+      "count": 93,
+      "success_rate": 100.0,
+      "p50_ms": 9,
+      "p95_ms": 5146,
+      "p99_ms": 10757,
+      "mean_ms": 1092
+    },
+    "Reflect": {
+      "count": 17,
+      "success_rate": 94.11764705882352,
+      "p50_ms": 1153,
+      "p95_ms": 7869,
+      "p99_ms": 9912,
+      "mean_ms": 2613
+    }
+  }
+}

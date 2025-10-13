@@ -1,0 +1,415 @@
+{
+  "summary": {
+    "total_seeds": 40,
+    "exact_matches": 16,
+    "within_1": 26,
+    "within_2": 31,
+    "mean_absolute_error": 1.45,
+    "max_error": 9,
+    "exact_accuracy": 40.0,
+    "within_1_accuracy": 65.0,
+    "within_2_accuracy": 77.5
+  },
+  "results": [
+    {
+      "seed_id": 1,
+      "category": "social",
+      "gold_score": 8,
+      "predicted_score": 7,
+      "error": 1,
+      "within_1": true,
+      "within_2": true,
+      "exact": false
+    },
+    {
+      "seed_id": 2,
+      "category": "social",
+      "gold_score": 5,
+      "predicted_score": 7,
+      "error": 2,
+      "within_1": false,
+      "within_2": true,
+      "exact": false
+    },
+    {
+      "seed_id": 3,
+      "category": "social",
+      "gold_score": 6,
+      "predicted_score": 7,
+      "error": 1,
+      "within_1": true,
+      "within_2": true,
+      "exact": false
+    },
+    {
+      "seed_id": 4,
+      "category": "social",
+      "gold_score": 7,
+      "predicted_score": 7,
+      "error": 0,
+      "within_1": true,
+      "within_2": true,
+      "exact": true
+    },
+    {
+      "seed_id": 5,
+      "category": "social",
+      "gold_score": 7,
+      "predicted_score": 7,
+      "error": 0,
+      "within_1": true,
+      "within_2": true,
+      "exact": true
+    },
+    {
+      "seed_id": 6,
+      "category": "social",
+      "gold_score": 8,
+      "predicted_score": 7,
+      "error": 1,
+      "within_1": true,
+      "within_2": true,
+      "exact": false
+    },
+    {
+      "seed_id": 7,
+      "category": "social",
+      "gold_score": 7,
+      "predicted_score": 7,
+      "error": 0,
+      "within_1": true,
+      "within_2": true,
+      "exact": true
+    },
+    {
+      "seed_id": 8,
+      "category": "social",
+      "gold_score": 6,
+      "predicted_score": 7,
+      "error": 1,
+      "within_1": true,
+      "within_2": true,
+      "exact": false
+    },
+    {
+      "seed_id": 9,
+      "category": "mundane",
+      "gold_score": 1,
+      "predicted_score": 3,
+      "error": 2,
+      "within_1": false,
+      "within_2": true,
+      "exact": false
+    },
+    {
+      "seed_id": 10,
+      "category": "mundane",
+      "gold_score": 2,
+      "predicted_score": 7,
+      "error": 5,
+      "within_1": false,
+      "within_2": false,
+      "exact": false
+    },
+    {
+      "seed_id": 11,
+      "category": "mundane",
+      "gold_score": 2,
+      "predicted_score": 5,
+      "error": 3,
+      "within_1": false,
+      "within_2": false,
+      "exact": false
+    },
+    {
+      "seed_id": 12,
+      "category": "mundane",
+      "gold_score": 1,
+      "predicted_score": 5,
+      "error": 4,
+      "within_1": false,
+      "within_2": false,
+      "exact": false
+    },
+    {
+      "seed_id": 13,
+      "category": "mundane",
+      "gold_score": 2,
+      "predicted_score": 5,
+      "error": 3,
+      "within_1": false,
+      "within_2": false,
+      "exact": false
+    },
+    {
+      "seed_id": 14,
+      "category": "mundane",
+      "gold_score": 1,
+      "predicted_score": 5,
+      "error": 4,
+      "within_1": false,
+      "within_2": false,
+      "exact": false
+    },
+    {
+      "seed_id": 15,
+      "category": "emotional",
+      "gold_score": 10,
+      "predicted_score": 7,
+      "error": 3,
+      "within_1": false,
+      "within_2": false,
+      "exact": false
+    },
+    {
+      "seed_id": 16,
+      "category": "emotional",
+      "gold_score": 9,
+      "predicted_score": 7,
+      "error": 2,
+      "within_1": false,
+      "within_2": true,
+      "exact": false
+    },
+    {
+      "seed_id": 17,
+      "category": "emotional",
+      "gold_score": 10,
+      "predicted_score": 1,
+      "error": 9,
+      "within_1": false,
+      "within_2": false,
+      "exact": false
+    },
+    {
+      "seed_id": 18,
+      "category": "emotional",
+      "gold_score": 9,
+      "predicted_score": 7,
+      "error": 2,
+      "within_1": false,
+      "within_2": true,
+      "exact": false
+    },
+    {
+      "seed_id": 19,
+      "category": "emotional",
+      "gold_score": 7,
+      "predicted_score": 7,
+      "error": 0,
+      "within_1": true,
+      "within_2": true,
+      "exact": true
+    },
+    {
+      "seed_id": 20,
+      "category": "emotional",
+      "gold_score": 7,
+      "predicted_score": 7,
+      "error": 0,
+      "within_1": true,
+      "within_2": true,
+      "exact": true
+    },
+    {
+      "seed_id": 21,
+      "category": "environmental",
+      "gold_score": 7,
+      "predicted_score": 7,
+      "error": 0,
+      "within_1": true,
+      "within_2": true,
+      "exact": true
+    },
+    {
+      "seed_id": 22,
+      "category": "environmental",
+      "gold_score": 6,
+      "predicted_score": 7,
+      "error": 1,
+      "within_1": true,
+      "within_2": true,
+      "exact": false
+    },
+    {
+      "seed_id": 23,
+      "category": "environmental",
+      "gold_score": 8,
+      "predicted_score": 7,
+      "error": 1,
+      "within_1": true,
+      "within_2": true,
+      "exact": false
+    },
+    {
+      "seed_id": 24,
+      "category": "environmental",
+      "gold_score": 4,
+      "predicted_score": 7,
+      "error": 3,
+      "within_1": false,
+      "within_2": false,
+      "exact": false
+    },
+    {
+      "seed_id": 25,
+      "category": "environmental",
+      "gold_score": 8,
+      "predicted_score": 8,
+      "error": 0,
+      "within_1": true,
+      "within_2": true,
+      "exact": true
+    },
+    {
+      "seed_id": 26,
+      "category": "environmental",
+      "gold_score": 5,
+      "predicted_score": 7,
+      "error": 2,
+      "within_1": false,
+      "within_2": true,
+      "exact": false
+    },
+    {
+      "seed_id": 27,
+      "category": "goal_relevant",
+      "gold_score": 9,
+      "predicted_score": 9,
+      "error": 0,
+      "within_1": true,
+      "within_2": true,
+      "exact": true
+    },
+    {
+      "seed_id": 28,
+      "category": "goal_relevant",
+      "gold_score": 8,
+      "predicted_score": 7,
+      "error": 1,
+      "within_1": true,
+      "within_2": true,
+      "exact": false
+    },
+    {
+      "seed_id": 29,
+      "category": "goal_relevant",
+      "gold_score": 7,
+      "predicted_score": 7,
+      "error": 0,
+      "within_1": true,
+      "within_2": true,
+      "exact": true
+    },
+    {
+      "seed_id": 30,
+      "category": "goal_relevant",
+      "gold_score": 8,
+      "predicted_score": 8,
+      "error": 0,
+      "within_1": true,
+      "within_2": true,
+      "exact": true
+    },
+    {
+      "seed_id": 31,
+      "category": "goal_relevant",
+      "gold_score": 7,
+      "predicted_score": 7,
+      "error": 0,
+      "within_1": true,
+      "within_2": true,
+      "exact": true
+    },
+    {
+      "seed_id": 32,
+      "category": "goal_relevant",
+      "gold_score": 8,
+      "predicted_score": 7,
+      "error": 1,
+      "within_1": true,
+      "within_2": true,
+      "exact": false
+    },
+    {
+      "seed_id": 33,
+      "category": "goal_relevant",
+      "gold_score": 7,
+      "predicted_score": 7,
+      "error": 0,
+      "within_1": true,
+      "within_2": true,
+      "exact": true
+    },
+    {
+      "seed_id": 34,
+      "category": "goal_relevant",
+      "gold_score": 7,
+      "predicted_score": 7,
+      "error": 0,
+      "within_1": true,
+      "within_2": true,
+      "exact": true
+    },
+    {
+      "seed_id": 35,
+      "category": "edge_cases",
+      "gold_score": 4,
+      "predicted_score": 5,
+      "error": 1,
+      "within_1": true,
+      "within_2": true,
+      "exact": false
+    },
+    {
+      "seed_id": 36,
+      "category": "edge_cases",
+      "gold_score": 3,
+      "predicted_score": 7,
+      "error": 4,
+      "within_1": false,
+      "within_2": false,
+      "exact": false
+    },
+    {
+      "seed_id": 37,
+      "category": "edge_cases",
+      "gold_score": 6,
+      "predicted_score": 6,
+      "error": 0,
+      "within_1": true,
+      "within_2": true,
+      "exact": true
+    },
+    {
+      "seed_id": 38,
+      "category": "edge_cases",
+      "gold_score": 5,
+      "predicted_score": 5,
+      "error": 0,
+      "within_1": true,
+      "within_2": true,
+      "exact": true
+    },
+    {
+      "seed_id": 39,
+      "category": "edge_cases",
+      "gold_score": 6,
+      "predicted_score": 6,
+      "error": 0,
+      "within_1": true,
+      "within_2": true,
+      "exact": true
+    },
+    {
+      "seed_id": 40,
+      "category": "edge_cases",
+      "gold_score": 6,
+      "predicted_score": 7,
+      "error": 1,
+      "within_1": true,
+      "within_2": true,
+      "exact": false
+    }
+  ]
+}

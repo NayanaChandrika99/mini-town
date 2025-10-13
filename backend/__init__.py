@@ -1,0 +1,1 @@
+"""Mini-Town backend package."""

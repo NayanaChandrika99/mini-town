@@ -1,0 +1,50 @@
+{
+  "event": {
+    "time": "2025-10-12 15:02:15.222428",
+    "location": [
+      200.0,
+      150.0
+    ],
+    "invitees": [
+      2,
+      3
+    ]
+  },
+  "attendees": [
+    {
+      "agent_id": 2,
+      "agent_name": "Alice",
+      "arrival_time": "2025-10-12 14:47:15.222624",
+      "distance_from_party": 34.164569556348944
+    },
+    {
+      "agent_id": 3,
+      "agent_name": "Bob",
+      "arrival_time": "2025-10-12 14:47:15.222624",
+      "distance_from_party": 27.901625258112038
+    }
+  ],
+  "use_compiled": false,
+  "scenario_name": "party_uncompiled",
+  "start_time": "2025-10-12T14:47:15.222428",
+  "duration_minutes": 20.027804749999998,
+  "tick_count": 365,
+  "agent_plans": {
+    "1": {
+      "name": "Maria",
+      "plan": "02:53-03:30 PM: Reach out to Alice via phone or text to initiate a conversation and get to know her better.\n03:30-04:00 PM: Meet Alice at the local park for a casual walk and get-to-know-each-other conversation.\n04:00-05:00 PM: Invite Alice to join the agent for a neighborhood potluck dinner to further develop their relationship and build a sense of community.",
+      "plan_last_updated": "2025-10-12T14:53:15.526426"
+    },
+    "2": {
+      "name": "Alice",
+      "plan": "03:00 PM - 03:30 PM: Head to the party at location (200, 150) and engage in small talk with Maria and other guests.\n03:30 PM - 04:00 PM: Explore the party area and introduce the agent to other people who may be of interest.\n04:00 PM - 04:30 PM: Continue to engage in social interactions and build relationships with new people.\n04:30 PM - 05:00 PM: Reflect on the agent's experiences and identify potential new connections.",
+      "plan_last_updated": "2025-10-12T14:53:15.526426"
+    },
+    "3": {
+      "name": "Bob",
+      "plan": "02:53 PM - 04:00 PM: Work on research project (focus on data analysis and organization)\n04:00 PM - 03:02 PM: Attend Maria's party at (200, 150) and build relationships\n03:02 PM - 05:00 PM: Continue working on research project (focus on writing and conclusions)\n05:00 PM - 06:00 PM: Review and finalize research project",
+      "plan_last_updated": "2025-10-12T14:53:15.526426"
+    }
+  },
+  "event_coherence": 0.0
+}

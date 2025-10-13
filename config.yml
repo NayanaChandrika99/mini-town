@@ -1,0 +1,51 @@
+simulation:
+  num_agents: 3  # Start with 3 for Day 0.5
+  tick_interval: 2.0  # Will be adjusted based on latency
+  reflect_threshold: 3.5
+  map_width: 400  # Reduced from 800 for Day 5 testing
+  map_height: 300  # Reduced from 600 for Day 5 testing
+  perception_radius: 50  # Distance at which agents can perceive each other
+
+llm:
+  provider: together  # groq | together | openai
+  model: meta-llama/Llama-3.2-3B-Instruct-Turbo  # Together.ai serverless model
+  api_key: ${TOGETHER_API_KEY}
+  temperature: 0.1  # Reduced from 0.3 for more consistent planning (Day 6 Fix 1A)
+  max_tokens: 512
+  timeout: 5.0
+
+embedding:
+  model: sentence-transformers/all-MiniLM-L6-v2
+  dimension: 384
+
+retrieval:
+  default_alpha: 0.5  # relevance weight
+  default_beta: 0.3   # recency weight
+  default_gamma: 0.2  # importance weight
+  top_k: 10
+
+compilation:
+  use_compiled: true  # ✅ Enabled after Day 4 compilation (2025-10-12)
+  compiled_dir: ./compiled/
+  optimizer: gepa  # gepa (primary) | miprov2 (fallback)
+  seeds_path: ./seeds/
+  gepa:
+    budget: 40  # fewer rollouts than MIPROv2 (40 vs 50-100+)
+  miprov2:
+    auto: medium
+    max_bootstrapped_demos: 4
+    max_labeled_demos: 5
+    num_trials: 10
+
+database:
+  path: data/town.db
+  memory_prune_days: 7
+  importance_threshold: 0.2
+
+observability:
+  log_level: INFO
+  log_file: logs/mini_town.log
+  structured_events: logs/agent_events.jsonl
+
+god_mode:
+  enabled: true

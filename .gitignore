@@ -1,0 +1,42 @@
+# Database (can be large, regenerate from seeds)
+data/town.db
+*.db
+
+# Logs
+logs/*.log
+logs/*.jsonl
+
+# Environment
+.env
+.env.local
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+mini-town/
+
+# Compilation outputs (large files, store in Drive)
+compiled/*.json
+compiled/*.pkl
+
+# Node
+node_modules/
+.next/
+out/
+.vercel
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

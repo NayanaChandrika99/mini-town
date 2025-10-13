@@ -1,0 +1,62 @@
+{
+  "emergency": {
+    "best_weights": {
+      "alpha": 0.7000000000000001,
+      "beta": 0.0,
+      "gamma": 0.29999999999999993,
+      "precision": 0.6,
+      "recall": 1.0,
+      "f1": 0.7499999999999999
+    },
+    "expected_weights": {
+      "alpha": 0.7,
+      "beta": 0.2,
+      "gamma": 0.1
+    }
+  },
+  "social_planning": {
+    "best_weights": {
+      "alpha": 0.0,
+      "beta": 0.5,
+      "gamma": 0.5,
+      "precision": 0.6,
+      "recall": 1.0,
+      "f1": 0.7499999999999999
+    },
+    "expected_weights": {
+      "alpha": 0.3,
+      "beta": 0.6,
+      "gamma": 0.1
+    }
+  },
+  "long_term_relationship": {
+    "best_weights": {
+      "alpha": 0.0,
+      "beta": 0.0,
+      "gamma": 1.0,
+      "precision": 0.6,
+      "recall": 1.0,
+      "f1": 0.7499999999999999
+    },
+    "expected_weights": {
+      "alpha": 0.3,
+      "beta": 0.1,
+      "gamma": 0.6
+    }
+  },
+  "goal_pursuit": {
+    "best_weights": {
+      "alpha": 0.8,
+      "beta": 0.0,
+      "gamma": 0.19999999999999996,
+      "precision": 0.8,
+      "recall": 1.0,
+      "f1": 0.888888888888889
+    },
+    "expected_weights": {
+      "alpha": 0.5,
+      "beta": 0.2,
+      "gamma": 0.3
+    }
+  }
+}
