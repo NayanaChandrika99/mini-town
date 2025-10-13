@@ -16,8 +16,8 @@ body {
 }
 
 body {
-  background: #1a1a1a;
-  color: #fff;
+  background: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 a {

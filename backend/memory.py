@@ -54,9 +54,19 @@ class MemoryStore:
                 goal TEXT,
                 personality TEXT,
                 current_plan TEXT,
+                plan_source TEXT,
+                plan_updated_at TIMESTAMP,
                 state TEXT DEFAULT 'active',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
+        """)
+
+        # Ensure new columns exist for legacy databases
+        self.conn.execute("""
+            ALTER TABLE agents ADD COLUMN IF NOT EXISTS plan_source TEXT
+        """)
+        self.conn.execute("""
+            ALTER TABLE agents ADD COLUMN IF NOT EXISTS plan_updated_at TIMESTAMP
         """)
 
         # Memories table with embeddings (auto-incrementing ID)
@@ -110,10 +120,13 @@ class MemoryStore:
         state: str = "active"
     ) -> None:
         """Create a new agent in the database."""
-        self.conn.execute("""
-            INSERT INTO agents (id, name, x, y, goal, personality, state)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, [agent_id, name, x, y, goal, personality, state])
+        self.conn.execute(
+            """
+            INSERT INTO agents (id, name, x, y, goal, personality, state, current_plan, plan_source, plan_updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            [agent_id, name, x, y, goal, personality, state, None, "unknown", None],
+        )
         logger.info(f"Created agent {agent_id}: {name} at ({x}, {y})")
 
     def update_agent_position(self, agent_id: int, x: float, y: float) -> None:
@@ -131,7 +144,7 @@ class MemoryStore:
     def get_agent(self, agent_id: int) -> Optional[Dict[str, Any]]:
         """Get agent by ID."""
         result = self.conn.execute("""
-            SELECT id, name, x, y, goal, personality, current_plan, state
+            SELECT id, name, x, y, goal, personality, current_plan, plan_source, plan_updated_at, state
             FROM agents WHERE id = ?
         """, [agent_id]).fetchone()
 
@@ -144,14 +157,16 @@ class MemoryStore:
                 "goal": result[4],
                 "personality": result[5],
                 "current_plan": result[6],
-                "state": result[7]
+                "plan_source": result[7] or "unknown",
+                "plan_updated_at": result[8],
+                "state": result[9]
             }
         return None
 
     def get_all_agents(self) -> List[Dict[str, Any]]:
         """Get all agents."""
         results = self.conn.execute("""
-            SELECT id, name, x, y, goal, personality, current_plan, state
+            SELECT id, name, x, y, goal, personality, current_plan, plan_source, plan_updated_at, state
             FROM agents
         """).fetchall()
 
@@ -164,10 +179,32 @@ class MemoryStore:
                 "goal": row[4],
                 "personality": row[5],
                 "current_plan": row[6],
-                "state": row[7]
+                "plan_source": row[7] or "unknown",
+                "plan_updated_at": row[8],
+                "state": row[9]
             }
             for row in results
         ]
+
+    def update_agent_plan(
+        self,
+        agent_id: int,
+        plan: Optional[str],
+        plan_source: Optional[str] = None,
+        plan_updated_at: Optional[datetime] = None,
+    ) -> None:
+        """Persist plan details for an agent."""
+        if plan_updated_at is None:
+            plan_updated_at = datetime.now()
+
+        self.conn.execute(
+            """
+            UPDATE agents
+            SET current_plan = ?, plan_source = ?, plan_updated_at = ?
+            WHERE id = ?
+            """,
+            [plan, plan_source or "unknown", plan_updated_at, agent_id],
+        )
 
     # ============ Memory Operations ============
 
@@ -216,6 +253,32 @@ class MemoryStore:
             }
             for row in results
         ]
+
+    def get_latest_reflection(
+        self,
+        agent_id: int
+    ) -> Optional[Dict[str, Any]]:
+        """Return the most recent reflection memory (prefixed with [REFLECTION])."""
+        result = self.conn.execute("""
+            SELECT ts, content
+            FROM memories
+            WHERE agent_id = ?
+              AND content LIKE '[REFLECTION] %'
+            ORDER BY ts DESC
+            LIMIT 1
+        """, [agent_id]).fetchone()
+
+        if not result:
+            return None
+
+        ts, content = result
+        # Strip the prefix to expose the human-readable insight.
+        insight = content[len("[REFLECTION] "):] if content.startswith("[REFLECTION] ") else content
+
+        return {
+            "ts": ts,
+            "content": insight
+        }
 
     def retrieve_memories_by_vector(
         self,

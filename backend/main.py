@@ -4,20 +4,28 @@ Day 0.5: Simulation loop with hardcoded agents + WebSocket broadcasting.
 Day 2: LLM-based observation scoring and reflection.
 """
 
+import os
 import asyncio
 import logging
-import yaml
+import random
+from collections import deque
 from datetime import datetime
 from pathlib import Path
-from typing import List, Set
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from typing import Any, Deque, Dict, List, Optional, Set
+from uuid import uuid4
+
+import yaml
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-import random
+from pydantic import BaseModel, Field
 
 from agents import Agent
 from memory import MemoryStore
 from utils import generate_embedding, get_latency_tracker
 from dspy_modules import configure_dspy
+
+# Reduce tokenizer fork warnings when using huggingface tokenizers.
+os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 
 # Setup logging
 logging.basicConfig(
@@ -56,6 +64,185 @@ agents: List[Agent] = []
 memory_store: MemoryStore = None
 connected_clients: Set[WebSocket] = set()
 simulation_running = False
+simulation_paused = False
+simulation_step_requested = False
+latest_town_score: Optional[float] = None
+event_queue: asyncio.Queue = asyncio.Queue()
+recent_events: Deque[Dict[str, Any]] = deque(maxlen=10)
+event_impacts: Dict[int, int] = {}
+EVENT_ALERT_TICKS = 5
+
+
+class InjectEventRequest(BaseModel):
+    """Payload for /god/inject_event."""
+
+    type: str = Field(..., description="Identifier for the injected event")
+    severity: Optional[float] = Field(
+        default=None,
+        description="Optional severity score between 0 and 1"
+    )
+    location: Optional[List[float]] = Field(
+        default=None,
+        description="Optional [x, y] location for the event"
+    )
+
+
+class PauseRequest(BaseModel):
+    """Payload for /god/pause."""
+
+    paused: Optional[bool] = Field(
+        default=None,
+        description="Explicit pause state; toggles if omitted"
+    )
+
+
+def find_agent(agent_id: int) -> Optional[Agent]:
+    """Helper to locate an agent by id."""
+    return next((agent for agent in agents if agent.id == agent_id), None)
+
+
+def get_system_state() -> Dict[str, Any]:
+    """Assemble system metrics for frontend consumption."""
+    tracker = get_latency_tracker()
+    stats = tracker.get_stats()
+
+    latency_values = [
+        data.get("mean_ms", 0)
+        for data in stats.values()
+        if data.get("count", 0) > 0
+    ]
+    avg_latency = float(sum(latency_values) / len(latency_values)) if latency_values else 0.0
+
+    compilation_cfg = config.get('compilation', {})
+    optimizer = "baseline"
+    if compilation_cfg.get('use_compiled'):
+        optimizer = compilation_cfg.get('optimizer', 'compiled')
+
+    town_score_value = latest_town_score if latest_town_score is not None else 0.0
+
+    return {
+        "llm_provider": config['llm']['provider'],
+        "llm_model": config['llm']['model'],
+        "optimizer": optimizer,
+        "town_score": town_score_value,
+        "avg_latency": avg_latency,
+        "tick_interval": config['simulation']['tick_interval'],
+        "paused": simulation_paused,
+        "recent_events": list(recent_events)
+    }
+
+
+async def broadcast_json(message: Dict[str, Any]) -> None:
+    """Send a JSON message to all connected WebSocket clients."""
+    if not connected_clients:
+        return
+
+    disconnected = set()
+    for client in list(connected_clients):
+        try:
+            await client.send_json(message)
+        except Exception as error:
+            logger.error(f"Error sending to client: {error}")
+            disconnected.add(client)
+
+    for client in disconnected:
+        connected_clients.discard(client)
+
+
+async def broadcast_system_update() -> None:
+    """Push current system metrics to subscribers."""
+    await broadcast_json({
+        "type": "system_update",
+        "state": get_system_state()
+    })
+
+
+async def handle_injected_event(event: Dict[str, Any]) -> None:
+    """Handle a God Mode injected event."""
+    logger.info("Processing injected event: %s", event)
+
+    # Mark agents as alert for a few ticks and store a memory.
+    for agent in agents:
+        event_impacts[agent.id] = max(event_impacts.get(agent.id, 0), EVENT_ALERT_TICKS)
+
+        description = f"Responded to {event['type']} event"
+        embedding = generate_embedding(description)
+        memory_store.store_memory(
+            agent_id=agent.id,
+            content=description,
+            importance=0.8,
+            embedding=embedding,
+            timestamp=datetime.now()
+        )
+
+    await broadcast_system_update()
+
+
+@app.post("/god/refresh_plan")
+async def refresh_plan(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """Trigger DSPy plan regeneration for one or all agents."""
+    agent_id = payload.get("agent_id")
+
+    if agent_id is not None:
+        target_agents = [agent for agent in agents if agent.id == agent_id]
+        if not target_agents:
+            raise HTTPException(status_code=404, detail=f"Agent {agent_id} not found")
+    else:
+        target_agents = list(agents)
+
+    refreshed: List[Dict[str, Any]] = []
+    for agent in target_agents:
+        plan = await agent.update_plan(memory_store)
+        if plan:
+            refreshed.append({
+                "agent_id": agent.id,
+                "plan": plan,
+                "plan_source": agent.plan_source,
+                "plan_last_updated": agent.plan_last_updated.isoformat() if agent.plan_last_updated else None,
+            })
+
+    # Broadcast updated agent states so UI refreshes immediately.
+    await broadcast_json({
+        "type": "agents_update",
+        "agents": [serialize_agent(agent) for agent in agents],
+    })
+
+    return {
+        "refreshed": len(refreshed),
+        "agents": refreshed,
+    }
+
+
+def serialize_agent(agent: Agent) -> Dict[str, Any]:
+    """Return the public fields for an agent."""
+    return agent.to_dict()
+
+
+def serialize_agent_detail(agent: Agent) -> Dict[str, Any]:
+    """Return detailed agent info including memories and reflections."""
+    agent_data = serialize_agent(agent)
+
+    memories_raw = memory_store.get_agent_memories(agent.id, limit=5)
+    memories = [
+        {
+            "id": mem["id"],
+            "ts": mem["ts"].isoformat(),
+            "content": mem["content"],
+            "importance": mem["importance"]
+        }
+        for mem in memories_raw
+    ]
+
+    latest_reflection_record = memory_store.get_latest_reflection(agent.id)
+    latest_reflection = None
+    if latest_reflection_record:
+        latest_reflection = latest_reflection_record["content"]
+
+    agent_data.update({
+        "memories": memories,
+        "latest_reflection": latest_reflection
+    })
+    return agent_data
 
 
 # ============ Simulation Logic ============
@@ -89,6 +276,18 @@ def initialize_agents():
             )
             agent.state = agent_data['state']
             agent.current_plan = agent_data['current_plan']
+            agent.plan_source = agent_data.get('plan_source') or "unknown"
+            plan_updated_at = agent_data.get('plan_updated_at')
+            if plan_updated_at:
+                if isinstance(plan_updated_at, datetime):
+                    agent.plan_last_updated = plan_updated_at
+                else:
+                    try:
+                        agent.plan_last_updated = datetime.fromisoformat(str(plan_updated_at))
+                    except Exception:
+                        agent.plan_last_updated = datetime.now()
+            elif agent.current_plan:
+                agent.plan_last_updated = datetime.now()
             agents.append(agent)
 
         logger.info(f"Loaded {len(agents)} agents from database")
@@ -137,7 +336,7 @@ def initialize_agents():
 
 async def simulation_loop():
     """Main simulation loop that updates agents and broadcasts state."""
-    global simulation_running
+    global simulation_running, simulation_paused, simulation_step_requested
 
     tick_interval = config['simulation']['tick_interval']
     tick_count = 0
@@ -146,8 +345,21 @@ async def simulation_loop():
     simulation_running = True
 
     while simulation_running:
+        if simulation_paused and not simulation_step_requested:
+            await asyncio.sleep(0.1)
+            continue
+
+        # Handle any pending God Mode events.
+        while True:
+            try:
+                injected_event = event_queue.get_nowait()
+            except asyncio.QueueEmpty:
+                break
+            await handle_injected_event(injected_event)
+
         tick_count += 1
         logger.debug(f"Tick {tick_count}")
+        tick_timestamp = datetime.now()
 
         # Update each agent
         agent_states = []
@@ -158,6 +370,14 @@ async def simulation_loop():
 
             # Update position in database
             memory_store.update_agent_position(agent.id, agent.x, agent.y)
+
+            # Override agent state if reacting to recent event
+            if event_impacts.get(agent.id, 0) > 0:
+                agent.state = "alert"
+                state['state'] = "alert"
+                event_impacts[agent.id] -= 1
+                if event_impacts[agent.id] <= 0:
+                    event_impacts.pop(agent.id, None)
 
             # Store observations as memories with LLM-based importance scoring
             if state['observations']:
@@ -176,36 +396,24 @@ async def simulation_loop():
                         content=f"[REFLECTION] {insight}",
                         importance=0.9,  # High importance
                         embedding=embedding,
-                        timestamp=datetime.now()
+                        timestamp=tick_timestamp
                     )
 
-        # Broadcast state to all connected clients
-        await broadcast_state({
+        # Broadcast agent and system updates
+        await broadcast_json({
+            "type": "agents_update",
             "tick": tick_count,
-            "timestamp": datetime.now().isoformat(),
+            "timestamp": tick_timestamp.isoformat(),
             "agents": agent_states
         })
+        await broadcast_system_update()
+
+        if simulation_step_requested:
+            simulation_step_requested = False
+            simulation_paused = True
 
         # Wait for next tick
         await asyncio.sleep(tick_interval)
-
-
-async def broadcast_state(state: dict):
-    """Broadcast simulation state to all connected WebSocket clients."""
-    if not connected_clients:
-        return
-
-    disconnected = set()
-    for client in connected_clients:
-        try:
-            await client.send_json(state)
-        except Exception as e:
-            logger.error(f"Error sending to client: {e}")
-            disconnected.add(client)
-
-    # Remove disconnected clients
-    for client in disconnected:
-        connected_clients.discard(client)
 
 
 # ============ API Endpoints ============
@@ -259,23 +467,24 @@ async def root():
 async def get_agents():
     """Get all agents and their current state."""
     return {
-        "agents": [agent.to_dict() for agent in agents]
+        "agents": [serialize_agent(agent) for agent in agents]
     }
 
 
 @app.get("/agents/{agent_id}")
 async def get_agent(agent_id: int):
     """Get specific agent details."""
-    agent = next((a for a in agents if a.id == agent_id), None)
+    agent = find_agent(agent_id)
     if not agent:
-        return {"error": "Agent not found"}, 404
+        raise HTTPException(status_code=404, detail="Agent not found")
 
-    # Get recent memories
     memories = memory_store.get_agent_memories(agent_id, limit=10)
+    reflection_record = memory_store.get_latest_reflection(agent_id)
 
     return {
-        "agent": agent.to_dict(),
-        "memories": memories
+        "agent": serialize_agent(agent),
+        "memories": memories,
+        "latest_reflection": reflection_record["content"] if reflection_record else None
     }
 
 
@@ -301,6 +510,81 @@ async def get_latency_stats():
     }
 
 
+@app.get("/api/agents")
+async def api_get_agents():
+    """Public API: list agents."""
+    return {
+        "agents": [serialize_agent(agent) for agent in agents]
+    }
+
+
+@app.get("/api/agents/{agent_id}")
+async def api_get_agent(agent_id: int):
+    """Public API: detailed agent view."""
+    agent = find_agent(agent_id)
+    if not agent:
+        raise HTTPException(status_code=404, detail="Agent not found")
+
+    return serialize_agent_detail(agent)
+
+
+@app.get("/api/system")
+async def api_get_system_state():
+    """Expose current system metrics."""
+    return get_system_state()
+
+
+@app.post("/god/pause")
+async def god_pause(payload: Optional[PauseRequest] = None):
+    """Toggle or explicitly set the simulation pause state."""
+    global simulation_paused
+
+    desired_state = payload.paused if payload and payload.paused is not None else not simulation_paused
+    simulation_paused = desired_state
+
+    status = "paused" if simulation_paused else "resumed"
+    await broadcast_system_update()
+    return {"status": status}
+
+
+@app.post("/god/step")
+async def god_step():
+    """Advance the simulation by a single tick."""
+    global simulation_step_requested
+
+    simulation_step_requested = True
+    await broadcast_system_update()
+    return {"status": "stepped"}
+
+
+@app.post("/god/inject_event")
+async def god_inject_event(payload: InjectEventRequest):
+    """Inject an event into the simulation (stub implementation)."""
+    if memory_store is None:
+        raise HTTPException(status_code=503, detail="Simulation not ready")
+
+    logger.info(
+        "Injecting event via God Mode: type=%s severity=%s location=%s",
+        payload.type,
+        payload.severity,
+        payload.location
+    )
+
+    event = {
+        "id": str(uuid4()),
+        "type": payload.type,
+        "severity": payload.severity,
+        "location": payload.location,
+        "timestamp": datetime.now().isoformat()
+    }
+
+    recent_events.appendleft(event)
+    await event_queue.put(event)
+    await broadcast_json({"type": "event", "event": event})
+
+    return {"status": "injected", "event": event}
+
+
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     """WebSocket endpoint for real-time simulation updates."""
@@ -313,7 +597,8 @@ async def websocket_endpoint(websocket: WebSocket):
         # Send initial state
         await websocket.send_json({
             "type": "init",
-            "agents": [agent.to_dict() for agent in agents],
+            "agents": [serialize_agent(agent) for agent in agents],
+            "system": get_system_state(),
             "config": {
                 "map_width": config['simulation']['map_width'],
                 "map_height": config['simulation']['map_height']

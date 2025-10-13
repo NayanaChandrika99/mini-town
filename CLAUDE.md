@@ -499,10 +499,10 @@ PERSONALITIES = {
 ---
 
 ### Day 7: God Mode + Debugging UI (6-8 hours)
-- [ ] Add `/god/inject_event`, `/god/pause`, `/god/step`
-- [ ] Build AgentInspector panel
-- [ ] Add personality traits to agents
-- [ ] Test: inject "fire alarm", observe reactions
+- [x] Add `/god/inject_event`, `/god/pause`, `/god/step`
+- [x] Build AgentInspector panel
+- [x] Add personality traits to agents
+- [x] Test: inject "fire alarm", observe reactions
 
 **Output**: Debugging tools work, personalities visible
 
@@ -1087,90 +1087,6 @@ Thumbs.db
 
 ---
 
-## Demo Video Script (Day 8-9)
-
-### Scene 1: Introduction (30 seconds)
-```
-[Screen recording of map with 5 agents]
-
-Voiceover: "This is Mini-Town: 5 autonomous agents that perceive, remember,
-reflect, and plan using large language models. But here's the twist—their
-prompts aren't handwritten. They're compiled programs, optimized against
-measurable goals."
-
-[Show SystemPanel: "Optimizer: GEPA, Score: 0.78"]
-```
-
----
-
-### Scene 2: Uncompiled Baseline (45 seconds)
-```
-[Reset simulation, show "Uncompiled Agents" overlay]
-
-Voiceover: "First, let's see the baseline. Maria invites Alice and Bob to 
-a party at 7pm. Watch what happens..."
-
-[Fast-forward to 7pm, agents scattered around map]
-
-Voiceover: "Only 1 out of 3 invited agents attended. Alice went shopping 
-instead. Bob forgot about it. The uncompiled prompts don't prioritize 
-social commitments."
-
-[Show event coherence metric: "0.33 (33% attendance)"]
-```
-
----
-
-### Scene 3: Compiled Version (45 seconds)
-```
-[Reset simulation, show "Compiled Agents (GEPA)" overlay]
-
-Voiceover: "Now the same scenario, but with compiled prompts. I trained
-the GEPA optimizer on 40 examples of importance scoring and reflection quality."
-
-[Fast-forward to 7pm, all 3 agents at party location]
-
-Voiceover: "This time, all 3 agents attended. They correctly scored Maria's 
-invitation as important, remembered it during planning, and showed up on time."
-
-[Show event coherence metric: "1.00 (100% attendance)"]
-[Show town_score comparison: "Uncompiled: 0.52 → Compiled: 0.78 (+50%)"]
-```
-
----
-
-### Scene 4: Agent Inspector (30 seconds)
-```
-[Click on Alice, show AgentInspector panel]
-
-Voiceover: "Here's Alice's internal state. You can see her recent memories, 
-the reflection she had about social connections, and her plan for the day. 
-The compiled program generates more coherent, goal-aligned reasoning."
-
-[Scroll through memories, highlight reflection: "Building relationships 
-is important for feeling connected to the community"]
-```
-
----
-
-### Scene 5: Closing (30 seconds)
-```
-[Show GitHub repo, README]
-
-Voiceover: "The entire project—including the compilation notebook, seeds, 
-and evaluation code—is open source. The total cost? Less than 50 cents. 
-All thanks to Colab Pro and strategic use of free tiers."
-
-[Show cost breakdown table]
-
-Voiceover: "This is just the beginning. Imagine compiled agents for 
-customer service, game NPCs, or personal assistants. The future of 
-LLM prompting isn't manual—it's compiled."
-
-[Fade to repo link and project title]
-```
-
-**Total Runtime**: ~3 minutes
 
 ---
 
@@ -1288,43 +1204,6 @@ vercel login
 vercel  # Follow prompts, deploys to *.vercel.app
 ```
 
----
-
-## Glossary
-
-**Agent**: An autonomous NPC with perception, memory, reflection, planning, and action capabilities.
-
-**DSPy**: A framework for treating prompts as typed programs that can be compiled/optimized.
-
-**Signature**: A typed input/output specification for an LLM call (like a function signature).
-
-**Module**: An implementation of a Signature (Predict, ChainOfThought, ReAct).
-
-**Compilation**: The process of optimizing prompts against a metric using training data (seeds).
-
-**MIPROv2**: A DSPy optimizer that jointly tunes instructions and few-shot examples.
-
-**GEPA**: A 2025 DSPy optimizer using reflective prompt evolution (fewer rollouts than MIPROv2).
-
-**Seed**: A training example for compilation (e.g., observation → gold score).
-
-**Triad Scoring**: Retrieval scoring that combines relevance, recency, and importance (α, β, γ weights).
-
-**Event Coherence**: Metric measuring whether invited agents attend events (% attendance).
-
-**Plan Fidelity**: Metric measuring how well agents follow their stated plans (edit distance).
-
-**Town Score**: Combined metric for compilation (weighted sum of coherence, fidelity, hit-rate).
-
-**God Mode**: Debugging interface for pausing sim, injecting events, and inspecting agents.
-
-**Tick**: One cycle of the simulation loop (default: 2 seconds).
-
-**Confused State**: Agent state when LLM call times out or returns invalid response.
-
-**Reflection**: Process where agent synthesizes high-level insights from recent memories.
-
-**Note**: A stored insight/reflection in the knowledge graph.
 
 ---
 
@@ -1346,22 +1225,6 @@ vercel  # Follow prompts, deploys to *.vercel.app
 - ReAct-based planning
 - 10-15 agents
 - Public demo
-
----
-
-## Contact & Attribution
-
-**Project Creator**: [Your Name/Handle]  
-**GitHub**: [Repo URL]  
-**License**: MIT  
-**Created**: January 2025  
-
-**Acknowledgments**:
-- DSPy team (Stanford NLP) for the compilation framework
-- Park et al. for Generative Agents architecture (Smallville paper)
-- Groq for generous free tier
-- Colab Pro for GPU access
-- Claude (Anthropic) for project planning assistance
 
 ---
 

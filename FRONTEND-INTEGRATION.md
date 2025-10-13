@@ -59,12 +59,56 @@ Messages sent by backend at ~2 Hz:
 
 ```ts
 // agents_update
-interface AgentMsg { id:number; name:string; x:number; y:number; state:'active'|'confused'|'idle'; }
-interface AgentsUpdate { type:'agents_update'; agents: AgentMsg[] }
+interface AgentMsg {
+  id:number;
+  name:string;
+  x:number;
+  y:number;
+  state:'active'|'confused'|'idle'|'waiting';
+  observations?:string[];
+  current_plan?:string | null;
+  plan_source?:'baseline'|'compiled'|'fallback'|string | null;
+  plan_last_updated?:string | null; // ISO timestamp
+}
+interface AgentsUpdate {
+  type:'agents_update';
+  agents: AgentMsg[];
+  tick:number;
+  timestamp:string;
+}
 
 // system_update
-interface SystemState { llm_provider:string; llm_model:string; optimizer:string; town_score:number; avg_latency:number; tick_interval:number }
+interface SystemState {
+  llm_provider:string;
+  llm_model:string;
+  optimizer:string;
+  town_score:number;
+  avg_latency:number;
+  tick_interval:number;
+  paused:boolean;
+  recent_events:{ id:string; type:string; timestamp:string; severity?:number; location?:[number,number] }[];
+}
 interface SystemUpdate { type:'system_update'; state: SystemState }
+
+// init (first payload on connect)
+interface InitMessage {
+  type:'init';
+  agents: AgentMsg[];
+  system: SystemState;
+  config: { map_width:number; map_height:number };
+}
+
+// event (broadcast when God Mode injects)
+interface EventBroadcast {
+  type:'event';
+  event:{
+    id:string;
+    type:string;
+    timestamp:string;
+    severity?:number;
+    location?:[number,number];
+  };
+}
 ```
 
 ### REST Endpoints
@@ -74,10 +118,14 @@ interface SystemUpdate { type:'system_update'; state: SystemState }
 {
   "id": 1,
   "name": "Alice",
+  "x": 210.4,
+  "y": 142.7,
   "state": "active",
   "personality": "social, optimistic",
   "goal": "Build relationships in the neighborhood",
-  "current_plan": "10:30 Wave to Bob\n11:00 Visit Maria",
+  "current_plan": "10:30 AM - 11:00 AM: Wave to Bob at (210, 145)\n11:15 AM - 11:45 AM: Visit Maria at (180, 120)",
+  "plan_source": "compiled",
+  "plan_last_updated": "2025-10-13T17:20:11.432Z",
   "memories": [
     { "id": 101, "ts": "2025-01-02T10:29:00Z", "content": "Bob waved hello", "importance": 0.7 }
   ],
@@ -85,32 +133,40 @@ interface SystemUpdate { type:'system_update'; state: SystemState }
 }
 ```
 
+- GET /api/system → latest `SystemState`
 - POST /god/pause → { status:"paused" }
 - POST /god/step → { status:"stepped" }
 - POST /god/inject_event { type:string, severity?:number, location?:[number,number] } → { status:"injected" }
+- POST /god/refresh_plan { agent_id?:number } → { refreshed:number, agents:[{agent_id,plan,plan_source,plan_last_updated}] }
 
 ## Components
 
-### SystemPanel.tsx
+### TownView.tsx
 
-- Shows optimizer, model, town_score, latency, tick.
-- Props: `systemState: SystemState` (from WS `system_update`).
+- High-level layout shell (header + map + sidebar) inspired by AI Town.
+- Composes `MapCanvas`, `SystemPanel`, `AgentInspector`, and `GodModeControls`.
+- Handles agent selection state, connection indicators, and layout spacing.
 
-### Map.tsx
+### MapCanvas.tsx
 
-- Renders agents on a canvas or absolutely-positioned layer.
+- Canvas-based map renderer for agents.
 - Props: `agents: AgentMsg[]`, `onAgentClick: (id:number)=>void`.
+- Attempts to draw `/assets/32x32folk.png` sprites; falls back to colored circles.
+- Highlights `state:'alert'` agents in warning color when responding to events.
+
+### SystemPanel.tsx
+- Shows optimizer/model/town_score/latency/tick, recent events, and a condensed list of active plans (source + freshness).
+- Props: `systemState: SystemState`, `events: TownEvent[]`, `agents: AgentMsg[]`, connection metadata.
 
 ### AgentInspector.tsx
+- Sidebar card showing selected agent details.
+- Polls GET /api/agents/{id} every 2 seconds.
+- Sections: status, goal, personality tags, current plan (with source/last updated chips and line-by-line breakdown), memory list, latest reflection.
 
-- Right-docked panel for selected agent.
-- Fetches GET /api/agents/{id} (SWR 2s refresh).
-- Sections: State/Goal/Personality, Current Plan (mono block), Recent Memories (top 5 with importance badges), Latest Reflection.
-
-### GodMode.tsx
-
-- Floating control: Pause / Step / Inject Event.
-- Calls POST /god/* endpoints; shows simple toasts.
+### GodModeControls.tsx
+- Pause / Step / Inject Event / Refresh Plans controls with toast feedback.
+- Calls POST `/god/*` endpoints; plan refresh hits `/god/refresh_plan` (all agents by default or targeted by ID).
+- Event injections broadcast immediately via WebSocket.
 
 ## WebSocket Hook (lib/websocket.ts)
 
@@ -120,7 +176,7 @@ export function useWebSocket(url:string){ /* open WS; route agents_update/system
 
 ## Integration Steps (Day 0.5 scaffold → polished UI)
 
-1. Ensure `frontend/` Next.js app exists; `npm install next react react-dom swr`.
+1. Ensure `frontend/` Next.js app exists; install dependencies with `npm install`.
 2. Add `styles/ai-town-theme.css`; import it in `_app.tsx`.
 3. Implement `lib/websocket.ts` and point to `ws://localhost:8000/ws` (env-driven in prod).
 4. Build `components/` listed above; wire them in `pages/index.tsx`.
@@ -147,11 +203,9 @@ export function useWebSocket(url:string){ /* open WS; route agents_update/system
 
 ### To-dos
 
-- [ ] Add ai-town-theme.css and import globally
-- [ ] Implement useWebSocket and wire system/agents updates
-- [ ] Create SystemPanel showing optimizer/model/score/latency/tick
-- [ ] Implement AgentInspector fetching GET /api/agents/{id}
-- [ ] Add GodMode controls calling /god endpoints
-- [ ] Expose WS + REST endpoints matching the documented shapes
-
-
+- [x] Add ai-town-theme.css and import globally
+- [x] Implement useWebSocket and wire system/agents updates
+- [x] Create SystemPanel showing optimizer/model/score/latency/tick
+- [x] Implement AgentInspector fetching GET /api/agents/{id}
+- [x] Add GodMode controls calling /god endpoints
+- [x] Expose WS + REST endpoints matching the documented shapes

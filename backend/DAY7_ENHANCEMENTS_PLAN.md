@@ -39,6 +39,8 @@ This document provides detailed implementation plans for each enhancement.
 
 ## Enhancement #1: Loitering Behavior
 
+> **Status (2025-10-12)**: ✅ Implemented in `backend/agents.py` with action types, loitering movement, and simple conversations during active event steps. Frontend map highlights new action states and recent event history.
+
 ### Problem Statement
 
 **Current Limitation**:

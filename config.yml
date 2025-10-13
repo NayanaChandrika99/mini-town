@@ -38,7 +38,7 @@ compilation:
     num_trials: 10
 
 database:
-  path: data/town.db
+  path: data/town_v2.db
   memory_prune_days: 7
   importance_threshold: 0.2
 

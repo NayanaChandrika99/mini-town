@@ -60,25 +60,28 @@ def configure_dspy(api_key: Optional[str] = None, provider: Optional[str] = None
 
     # Configure LLM based on provider
     if provider == 'groq':
-        lm = dspy.LM(
-            model=f"groq/{model}",
+        # Groq exposes an OpenAI-compatible endpoint.
+        lm = dspy.OpenAI(
+            model=model,
             api_key=api_key,
+            api_provider='openai',
+            api_base="https://api.groq.com/openai/v1",
             temperature=temperature,
-            max_tokens=max_tokens
+            max_tokens=max_tokens,
         )
     elif provider == 'together':
-        lm = dspy.LM(
-            model=f"together_ai/{model}",
-            api_key=api_key,
-            temperature=temperature,
-            max_tokens=max_tokens
-        )
-    elif provider == 'openai':
-        lm = dspy.LM(
+        lm = dspy.Together(
             model=model,
             api_key=api_key,
             temperature=temperature,
-            max_tokens=max_tokens
+            max_tokens=max_tokens,
+        )
+    elif provider == 'openai':
+        lm = dspy.OpenAI(
+            model=model,
+            api_key=api_key,
+            temperature=temperature,
+            max_tokens=max_tokens,
         )
     else:
         raise ValueError(f"Unsupported provider: {provider}")
@@ -274,7 +277,9 @@ async def generate_plan(
     events_str = "\n".join([f"- {event}" for event in recent_events]) if recent_events else "No recent events"
     memories_str = "\n".join([f"- {mem}" for mem in relevant_memories]) if relevant_memories else "No relevant memories"
 
-    result = planner(
+    current_planner = get_current_planner()
+
+    result = current_planner(
         agent_goal=agent_goal,
         agent_personality=agent_personality,
         current_time=current_time,
@@ -286,10 +291,23 @@ async def generate_plan(
     return result.plan
 
 
+def get_planner_source() -> str:
+    """
+    Return a human-readable label describing which planner is active.
+
+    Returns:
+        "compiled" if the compiled planner is enabled and available, otherwise "baseline".
+    """
+    if _use_compiled and _compiled_planner is not None:
+        return "compiled"
+    return "baseline"
+
+
 # ============ Compiled Module Management ============
 
 # Compiled modules (loaded from disk)
 _compiled_scorer = None
+_compiled_planner = None
 _use_compiled = False
 
 
@@ -300,28 +318,43 @@ def load_compiled_modules(compiled_dir: str = "compiled"):
     Args:
         compiled_dir: Directory containing compiled modules
     """
-    global _compiled_scorer
+    global _compiled_scorer, _compiled_planner
 
     from pathlib import Path
     import os
 
     project_root = Path(__file__).parent.parent
     compiled_path = project_root / compiled_dir / "compiled_scorer.json"
+    planner_path = project_root / compiled_dir / "compiled_planner.json"
+
+    loaded = True
 
     if os.path.exists(compiled_path):
         try:
-            # Create baseline structure
             _compiled_scorer = dspy.ChainOfThought(ScoreImportance)
-            # Load compiled state
             _compiled_scorer.load(str(compiled_path))
             logger.info(f"✅ Compiled scorer loaded from {compiled_path}")
-            return True
         except Exception as e:
             logger.error(f"Failed to load compiled scorer: {e}")
-            return False
+            _compiled_scorer = None
+            loaded = False
     else:
         logger.warning(f"Compiled scorer not found at {compiled_path}")
-        return False
+        loaded = False
+
+    if os.path.exists(planner_path):
+        try:
+            _compiled_planner = dspy.Predict(PlanDay)
+            _compiled_planner.load(str(planner_path))
+            logger.info(f"✅ Compiled planner loaded from {planner_path}")
+        except Exception as e:
+            logger.error(f"Failed to load compiled planner: {e}")
+            _compiled_planner = None
+            loaded = False
+    else:
+        logger.info(f"Compiled planner not found at {planner_path}")
+
+    return loaded
 
 
 def use_compiled(enabled: bool = True):
@@ -333,7 +366,7 @@ def use_compiled(enabled: bool = True):
     """
     global _use_compiled
 
-    if enabled and _compiled_scorer is None:
+    if enabled and (_compiled_scorer is None and _compiled_planner is None):
         logger.warning("Compiled modules not loaded, attempting to load...")
         if not load_compiled_modules():
             logger.error("Cannot enable compiled modules, using uncompiled")
@@ -355,6 +388,15 @@ def get_current_scorer():
     if _use_compiled and _compiled_scorer is not None:
         return _compiled_scorer
     return scorer
+
+
+def get_current_planner():
+    """
+    Get the currently active planner (compiled or uncompiled).
+    """
+    if _use_compiled and _compiled_planner is not None:
+        return _compiled_planner
+    return planner
 
 
 # ============ Module Info ============
@@ -379,7 +421,8 @@ def get_module_info():
             "planner": {
                 "type": "Predict",
                 "signature": "PlanDay",
-                "compiled": False
+                "compiled": _use_compiled and _compiled_planner is not None,
+                "available_compiled": _compiled_planner is not None
             }
         }
     }

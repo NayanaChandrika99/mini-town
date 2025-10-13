@@ -1,0 +1,193 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "created_at": "2025-10-13",
+    "description": "Training examples for PlanDay compilation. Each seed preserves exact invitation times and coordinates."
+  },
+  "seeds": [
+    {
+      "id": 1,
+      "agent_goal": "Build relationships in the neighborhood",
+      "agent_personality": "social, optimistic",
+      "current_time": "08:30 AM",
+      "current_location": "(210, 160)",
+      "recent_events": [
+        "Maria invited you to community breakfast at (220, 180) at 9:00 AM."
+      ],
+      "relevant_memories": [
+        "You promised to help set up tables for the breakfast."
+      ],
+      "gold_plan": "08:30 AM - 08:50 AM: Walk to the community center and help set up tables (220, 180)\n08:50 AM - 09:00 AM: Greet guests as they arrive (220, 180)\n09:00 AM - 09:45 AM: Attend community breakfast with Maria (220, 180)\n10:00 AM - 10:30 AM: Write thank-you notes to attendees at (210, 160)",
+      "rationale": "Keeps the 9:00 AM time and exact location from invitation. Adds prep time because the agent volunteered to help."
+    },
+    {
+      "id": 2,
+      "agent_goal": "Maintain community garden",
+      "agent_personality": "organized, punctual",
+      "current_time": "10:10 AM",
+      "current_location": "(180, 140)",
+      "recent_events": [
+        "Carol reminded you about the garden watering schedule at (190, 170) at 10:30 AM."
+      ],
+      "relevant_memories": [
+        "Soil moisture was low yesterday afternoon."
+      ],
+      "gold_plan": "10:10 AM - 10:25 AM: Gather tools and watering cans from the shed (175, 145)\n10:25 AM - 10:30 AM: Walk to the planter rows (190, 170)\n10:30 AM - 11:00 AM: Water garden beds and check moisture sensors (190, 170)\n11:00 AM - 11:15 AM: Log watering results in the community notebook (185, 150)",
+      "rationale": "Arrives by 10:30 AM exactly; includes prep and follow-up tasks relevant to garden upkeep."
+    },
+    {
+      "id": 3,
+      "agent_goal": "Document neighborhood stories",
+      "agent_personality": "curious, detail-oriented",
+      "current_time": "01:15 PM",
+      "current_location": "(240, 200)",
+      "recent_events": [
+        "Eli invited you to record a podcast interview at (230, 220) at 2:00 PM."
+      ],
+      "relevant_memories": [
+        "Yesterday's interview ran long because you didn’t outline questions beforehand."
+      ],
+      "gold_plan": "01:15 PM - 01:35 PM: Outline interview questions at the library table (235, 205)\n01:35 PM - 01:50 PM: Test recording equipment and batteries (235, 205)\n01:50 PM - 02:00 PM: Walk to Eli's studio with gear (230, 220)\n02:00 PM - 02:45 PM: Record podcast interview with Eli (230, 220)\n02:45 PM - 03:00 PM: Save audio files and write follow-up notes (230, 220)",
+      "rationale": "Protects the 2:00 PM interview time while adding prep tasks tailored to previous lessons."
+    },
+    {
+      "id": 4,
+      "agent_goal": "Complete research project on local history",
+      "agent_personality": "analytical, introverted",
+      "current_time": "03:40 PM",
+      "current_location": "(205, 155)",
+      "recent_events": [
+        "Reminder: Archive closes at (180, 130) at 4:30 PM."
+      ],
+      "relevant_memories": [
+        "Need to scan the 1920s town council minutes before deadline."
+      ],
+      "gold_plan": "03:40 PM - 03:50 PM: Pack document scanner and reference notes (205, 155)\n03:50 PM - 04:05 PM: Walk quietly to the archive (180, 130)\n04:05 PM - 04:25 PM: Scan 1920s council minutes and verify image quality (180, 130)\n04:25 PM - 04:30 PM: Return materials and log scanned pages before closing (180, 130)\n04:30 PM - 04:45 PM: Walk home and back up files (205, 155)",
+      "rationale": "Treats closing time as a hard deadline. Includes focused tasks aligned with introverted/analytical personality."
+    },
+    {
+      "id": 5,
+      "agent_goal": "Make every day an adventure",
+      "agent_personality": "spontaneous, friendly",
+      "current_time": "11:45 AM",
+      "current_location": "(260, 210)",
+      "recent_events": [
+        "You found a flyer for an improv workshop at (250, 190) starting 12:00 PM."
+      ],
+      "relevant_memories": [
+        "Performing helps you loosen up before afternoon meetings."
+      ],
+      "gold_plan": "11:45 AM - 11:55 AM: Grab a snack and water bottle (255, 205)\n11:55 AM - 12:00 PM: Walk to improv studio (250, 190)\n12:00 PM - 01:00 PM: Join improv workshop and meet new performers (250, 190)\n01:00 PM - 01:15 PM: Trade contact info and schedule follow-up jam session (250, 190)\n01:15 PM - 01:30 PM: Journal funny moments at the park bench (245, 195)",
+      "rationale": "Arrives in time for noon start, adds post-workshop social activity consistent with personality."
+    },
+    {
+      "id": 6,
+      "agent_goal": "Build relationships in the neighborhood",
+      "agent_personality": "social, optimistic",
+      "current_time": "05:10 PM",
+      "current_location": "(210, 160)",
+      "recent_events": [
+        "Text from Ben: game night at (215, 165) begins at 6:00 PM.",
+        "Note: bring a new board game to share."
+      ],
+      "relevant_memories": [
+        "Last time you forgot snacks and felt unprepared."
+      ],
+      "gold_plan": "05:10 PM - 05:30 PM: Choose a cooperative board game and pack it (210, 160)\n05:30 PM - 05:45 PM: Pick up snacks from market (205, 150)\n05:45 PM - 05:55 PM: Walk to Ben's apartment (215, 165)\n05:55 PM - 06:00 PM: Help set up the table (215, 165)\n06:00 PM - 08:00 PM: Attend game night with neighbors (215, 165)\n08:00 PM - 08:15 PM: Help tidy up and thank Ben (215, 165)",
+      "rationale": "Keeps 6:00 PM start time and adds thoughtful preparation aligned with social goal."
+    },
+    {
+      "id": 7,
+      "agent_goal": "Maintain community garden",
+      "agent_personality": "organized, punctual",
+      "current_time": "07:20 AM",
+      "current_location": "(175, 145)",
+      "recent_events": [
+        "Sunrise yoga invitation at (200, 150) at 7:30 AM to coordinate volunteer shifts."
+      ],
+      "relevant_memories": [
+        "Meeting with volunteers boosts attendance at weekend work parties."
+      ],
+      "gold_plan": "07:20 AM - 07:28 AM: Bring attendance sheet and garden calendar (175, 145)\n07:28 AM - 07:30 AM: Walk to the yoga lawn (200, 150)\n07:30 AM - 08:15 AM: Join sunrise yoga and discuss volunteer schedule (200, 150)\n08:15 AM - 08:25 AM: Confirm weekend assignments with attendees (200, 150)\n08:25 AM - 08:40 AM: Update the schedule board at the garden entrance (190, 170)",
+      "rationale": "Arrives exactly at 7:30 AM, incorporates logistical follow-up consistent with organized personality."
+    },
+    {
+      "id": 8,
+      "agent_goal": "Document neighborhood stories",
+      "agent_personality": "curious, detail-oriented",
+      "current_time": "02:20 PM",
+      "current_location": "(210, 200)",
+      "recent_events": [
+        "Spontaneous street performance announced at (205, 180) at 2:30 PM."
+      ],
+      "relevant_memories": [
+        "Capturing candid photos of performers attracts readers."
+      ],
+      "gold_plan": "02:20 PM - 02:25 PM: Grab camera and backup batteries (210, 200)\n02:25 PM - 02:30 PM: Walk to the plaza stage (205, 180)\n02:30 PM - 03:00 PM: Photograph street performance and gather quotes (205, 180)\n03:00 PM - 03:20 PM: Interview performers about their history (205, 180)\n03:20 PM - 03:40 PM: Draft blog post outline at the café table (208, 185)",
+      "rationale": "Ensures the agent reaches the impromptu event on time while adding documentation tasks."
+    },
+    {
+      "id": 9,
+      "agent_goal": "Complete research project on local history",
+      "agent_personality": "analytical, introverted",
+      "current_time": "04:55 PM",
+      "current_location": "(215, 175)",
+      "recent_events": [
+        "Email: Professor Lee scheduled a review call at (video booth 210, 165) at 5:15 PM."
+      ],
+      "relevant_memories": [
+        "Need to summarize yesterday's findings before call."
+      ],
+      "gold_plan": "04:55 PM - 05:05 PM: Compile bullet-point summary of findings (215, 175)\n05:05 PM - 05:10 PM: Walk to video booth and set up notes (210, 165)\n05:10 PM - 05:15 PM: Test microphone and internet connection (210, 165)\n05:15 PM - 05:45 PM: Review findings with Professor Lee via call (210, 165)\n05:45 PM - 06:00 PM: Update project tracker with action items (215, 175)",
+      "rationale": "Adheres to 5:15 PM call time; adds structured prep steps to match analytical personality."
+    },
+    {
+      "id": 10,
+      "agent_goal": "Build relationships in the neighborhood",
+      "agent_personality": "social, optimistic",
+      "current_time": "06:20 PM",
+      "current_location": "(225, 190)",
+      "recent_events": [
+        "Ravi texted: outdoor movie night at (240, 210) starts at 7:00 PM.",
+        "BYO blanket reminder."
+      ],
+      "relevant_memories": [
+        "Ravi enjoys when you introduce friends to each other."
+      ],
+      "gold_plan": "06:20 PM - 06:35 PM: Invite two neighbors and grab a blanket (225, 190)\n06:35 PM - 06:45 PM: Prepare hot cocoa thermos (225, 190)\n06:45 PM - 06:55 PM: Walk to the park lawn with guests (240, 210)\n06:55 PM - 07:00 PM: Find seating area and greet Ravi (240, 210)\n07:00 PM - 09:00 PM: Watch movie and make introductions (240, 210)\n09:00 PM - 09:10 PM: Help clean up trash (240, 210)",
+      "rationale": "Honors 7:00 PM start and the location, adds social preparation tasks."
+    },
+    {
+      "id": 11,
+      "agent_goal": "Make every day an adventure",
+      "agent_personality": "spontaneous, friendly",
+      "current_time": "09:40 AM",
+      "current_location": "(195, 150)",
+      "recent_events": [
+        "Pop-up art walk begins at (205, 165) at 10:00 AM.",
+        "Artist Sofia promised to show her newest piece."
+      ],
+      "relevant_memories": [
+        "You get best photos when arriving before crowds."
+      ],
+      "gold_plan": "09:40 AM - 09:50 AM: Grab sketchbook and camera (195, 150)\n09:50 AM - 09:55 AM: Walk to art walk entrance (205, 165)\n09:55 AM - 10:00 AM: Meet Sofia before crowd arrives (205, 165)\n10:00 AM - 11:00 AM: Explore art walk and take photos (205, 165)\n11:00 AM - 11:20 AM: Share highlights on social media from café table (202, 162)",
+      "rationale": "Arrives right at 10:00 AM opening, encourages pre-event meetup consistent with adventurous personality."
+    },
+    {
+      "id": 12,
+      "agent_goal": "Maintain community garden",
+      "agent_personality": "organized, punctual",
+      "current_time": "01:05 PM",
+      "current_location": "(180, 145)",
+      "recent_events": [
+        "Weather alert: thunderstorm at 2:00 PM may damage seedlings.",
+        "Gardeners requested emergency cover setup at (190, 170) by 1:45 PM."
+      ],
+      "relevant_memories": [
+        "Backup tarps stored in maintenance shed."
+      ],
+      "gold_plan": "01:05 PM - 01:20 PM: Gather tarps and stakes from maintenance shed (175, 150)\n01:20 PM - 01:35 PM: Coordinate with volunteers via group chat (180, 145)\n01:35 PM - 01:45 PM: Walk to seedling beds with supplies (190, 170)\n01:45 PM - 02:00 PM: Secure tarps before storm arrives (190, 170)\n02:00 PM - 02:15 PM: Monitor weather from greenhouse (188, 168)\n02:15 PM - 02:30 PM: Log emergency actions in garden journal (185, 150)",
+      "rationale": "Treats 1:45 PM request as fixed deadline, includes prep and follow-up that suit an organized caretaker."
+    }
+  ]
+}
