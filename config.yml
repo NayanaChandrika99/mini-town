@@ -9,7 +9,7 @@ simulation:
   minutes_per_tick: 5
 llm:
   provider: together
-  model: meta-llama/Llama-3.2-3B-Instruct-Turbo
+  model: openai/gpt-oss-20b
   api_key: ${TOGETHER_API_KEY}
   temperature: 0.1
   max_tokens: 512

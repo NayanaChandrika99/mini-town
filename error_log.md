@@ -198,3 +198,40 @@ CREATE INDEX ... USING HNSW (embedding)
 
 ---
 
+## 2025-10-15 - GEPA Prompt Compilation Compat + Together Model Access
+
+### Error A: `ModuleNotFoundError: No module named 'dspy.adapters.types'`
+**Component**: GEPA → DSPy adapter (TownAgent compilation)  
+**Context**: Running `compilation/compile_town_agent.py` with GEPA 0.0.7 on DSPy 2.4.10/2.5.x. The adapter expects `History` in `dspy.adapters.types`, which no longer exists.  
+**Resolution**: Stub a minimal `History` class before importing the adapter. Implemented in `compilation/compile_town_agent.py` by injecting a shim module into `sys.modules["dspy.adapters.types"]`.  
+**Status**: ✅ Fixed.
+
+### Error B: `ModuleNotFoundError: No module named 'dspy.teleprompt.bootstrap_trace'`
+**Component**: Same GEPA adapter  
+**Context**: DSPy removed `bootstrap_trace` helpers; GEPA still imports them.  
+**Resolution**: Added `compilation/dspy_bootstrap_trace_compat.py` implementing lightweight replacements for `TraceData`, `FailedPrediction`, and `bootstrap_trace_data`, then registered it as `dspy.teleprompt.bootstrap_trace`.  
+**Status**: ✅ Fixed.
+
+### Error C: Together API “model_not_available” / dedicated endpoint required  
+**Component**: Baseline & GEPA compile LLM calls  
+**Context**: Together rejected `meta-llama/...` model IDs (Turbo/managed variants).  
+**Resolution**: List available models via `client.models.list()`, switch to serverless IDs (e.g. `meta-llama/Meta-Llama-3-8B-Instruct-Lite`), and update the LM configuration in the notebook/script.  
+**Status**: ✅ Fixed (with model list verification step).
+
+### Error D: `TypeError: argument of type 'TownAgentResponse' is not iterable`
+**Component**: GEPA evaluation pipeline  
+**Context**: DSPy’s `merge_dicts` expects predictions to behave like mappings. `TownAgentResponse` lacked mapping semantics, so GEPA crashed on the first rollout.  
+**Resolution**: Extended `programs/town_agent.py` to add `items`, `__contains__`, `__iter__`, and `get` wrappers that proxy to `to_dict()`, making the response dict-compatible.  
+**Status**: ✅ Fixed (retained mapping helpers).
+
+### Error E: GEPA adapter assumes `Evaluate` returns object with `.results`
+**Component**: GEPA evaluation pipeline  
+**Context**: DSPy 2.4/2.5 returns a `(score, results, scores)` tuple when `return_outputs=True`. GEPA’s adapter expected a result object with a `results` attribute and crashed before any rollouts.  
+**Resolution**: Monkey-patched `DspyAdapter.evaluate` in `compilation/compile_town_agent.py` to normalize both return shapes (object vs. tuple) into the structure GEPA expects.  
+**Status**: ✅ Fixed (handled inside adapter shim).
+
+### Follow-up
+- `compilation/compile_town_agent.py` now imports without errors; remaining failures are due to sandboxed network limits. To compile locally run:  
+  `PYTHONPATH=.:backend mini-town/bin/python compilation/compile_town_agent.py --dataset datasets/town_agent_train.jsonl --budget 40`
+
+---

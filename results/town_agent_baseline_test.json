@@ -1,0 +1,91 @@
+{
+  "dataset": "datasets/town_agent_test.jsonl",
+  "examples": 9,
+  "mean_score": 0.15,
+  "median_score": 0.15,
+  "min_score": 0.15,
+  "max_score": 0.15,
+  "details": [
+    {
+      "agent": "Bob",
+      "score": 0.15,
+      "feedback": "Plan has overlaps or missing coordinates. Tie steps more explicitly to retrieved memories.",
+      "preserved_event_times": [],
+      "missing_event_times": [],
+      "overlaps_detected": false,
+      "invalid_locations": []
+    },
+    {
+      "agent": "Bob",
+      "score": 0.15,
+      "feedback": "Plan has overlaps or missing coordinates. Tie steps more explicitly to retrieved memories.",
+      "preserved_event_times": [],
+      "missing_event_times": [],
+      "overlaps_detected": false,
+      "invalid_locations": []
+    },
+    {
+      "agent": "Carol",
+      "score": 0.15,
+      "feedback": "Plan has overlaps or missing coordinates. Tie steps more explicitly to retrieved memories.",
+      "preserved_event_times": [],
+      "missing_event_times": [],
+      "overlaps_detected": false,
+      "invalid_locations": []
+    },
+    {
+      "agent": "Alice",
+      "score": 0.15,
+      "feedback": "Plan has overlaps or missing coordinates. Tie steps more explicitly to retrieved memories.",
+      "preserved_event_times": [],
+      "missing_event_times": [],
+      "overlaps_detected": false,
+      "invalid_locations": []
+    },
+    {
+      "agent": "Bob",
+      "score": 0.15,
+      "feedback": "Plan has overlaps or missing coordinates. Tie steps more explicitly to retrieved memories.",
+      "preserved_event_times": [],
+      "missing_event_times": [],
+      "overlaps_detected": false,
+      "invalid_locations": []
+    },
+    {
+      "agent": "Alice",
+      "score": 0.15,
+      "feedback": "Plan has overlaps or missing coordinates. Tie steps more explicitly to retrieved memories.",
+      "preserved_event_times": [],
+      "missing_event_times": [],
+      "overlaps_detected": false,
+      "invalid_locations": []
+    },
+    {
+      "agent": "Bob",
+      "score": 0.15,
+      "feedback": "Plan has overlaps or missing coordinates. Tie steps more explicitly to retrieved memories.",
+      "preserved_event_times": [],
+      "missing_event_times": [],
+      "overlaps_detected": false,
+      "invalid_locations": []
+    },
+    {
+      "agent": "Alice",
+      "score": 0.15,
+      "feedback": "Plan has overlaps or missing coordinates. Tie steps more explicitly to retrieved memories.",
+      "preserved_event_times": [],
+      "missing_event_times": [],
+      "overlaps_detected": false,
+      "invalid_locations": []
+    },
+    {
+      "agent": "Alice",
+      "score": 0.15,
+      "feedback": "Plan has overlaps or missing coordinates. Tie steps more explicitly to retrieved memories.",
+      "preserved_event_times": [],
+      "missing_event_times": [],
+      "overlaps_detected": false,
+      "invalid_locations": []
+    }
+  ]
+}

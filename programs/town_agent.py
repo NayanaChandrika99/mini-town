@@ -52,6 +52,22 @@ class TownAgentResponse:
             "next_action_reasoning": self.next_action_reasoning,
         }
 
+    # Mapping protocol for compatibility with dspy.Evaluate / GEPA adapter.
+    def _mapping(self) -> Dict[str, Any]:
+        return self.to_dict()
+
+    def items(self):
+        return self._mapping().items()
+
+    def __contains__(self, key: str) -> bool:
+        return key in self._mapping()
+
+    def __iter__(self):
+        return iter(self._mapping())
+
+    def get(self, key: str, default: Any = None) -> Any:
+        return self._mapping().get(key, default)
+
 
 class TownAgentProgram(dspy.Module):
     """
@@ -85,6 +101,11 @@ class TownAgentProgram(dspy.Module):
         relevant_memories = relevant_memories or []
         candidate_actions = candidate_actions or []
 
+        def _record_trace(module_obj: Any, inputs: Dict[str, Any], outputs: Dict[str, Any]) -> None:
+            trace_buffer = getattr(dspy.settings, "trace", None)
+            if isinstance(trace_buffer, list):
+                trace_buffer.append((module_obj, inputs, outputs))
+
         scored_observations: List[ScoredObservation] = []
         for obs in recent_observations:
             if not obs:
@@ -101,6 +122,18 @@ class TownAgentProgram(dspy.Module):
             reasoning_text = getattr(result, "reasoning", None)
             reasoning = reasoning_text.strip() if isinstance(reasoning_text, str) else None
             scored_observations.append(ScoredObservation(text=obs, score=score_value, reasoning=reasoning))
+            _record_trace(
+                self.scorer,
+                {
+                    "observation": obs,
+                    "goal": agent_goal,
+                    "personality": agent_personality,
+                },
+                {
+                    "score": score_value,
+                    "reasoning": reasoning,
+                },
+            )
 
         reflection = None
         if relevant_memories:
@@ -113,6 +146,16 @@ class TownAgentProgram(dspy.Module):
             reflection_value = getattr(reflection_result, "insight", None)
             if isinstance(reflection_value, str):
                 reflection = reflection_value.strip()
+            _record_trace(
+                self.reflector,
+                {
+                    "recent_memories": relevant_memories[:5],
+                    "goal": agent_goal,
+                },
+                {
+                    "insight": reflection,
+                },
+            )
 
         recent_events_str = "\n".join(f"- {event}" for event in recent_events) if recent_events else "No recent events"
         relevant_memories_str = (
@@ -136,6 +179,31 @@ class TownAgentProgram(dspy.Module):
         plan_validation = validate_plan_output(structured_plan, recent_events)
         plan_text = format_plan_text(structured_plan)
 
+        first_step = None
+        steps = structured_plan.get("steps", []) if isinstance(structured_plan, dict) else []
+        if steps:
+            first_step = steps[0]
+
+        _record_trace(
+            self.planner,
+            {
+                "current_time": current_time,
+                "location": current_location,
+                "events": recent_events[:3],
+                "memories": relevant_memories[:3],
+            },
+            {
+                "summary": structured_plan.get("summary") if isinstance(structured_plan, dict) else None,
+                "first_step": first_step,
+                "plan_text": plan_text,
+                "validation": {
+                    "missing": plan_validation.missing_event_times,
+                    "invalid": plan_validation.invalid_locations,
+                    "overlaps": plan_validation.overlaps_detected,
+                },
+            },
+        )
+
         next_action = None
         next_action_reasoning = None
         if candidate_actions:
@@ -152,6 +220,17 @@ class TownAgentProgram(dspy.Module):
             next_reason = getattr(selector_result, "reasoning", None)
             if isinstance(next_reason, str):
                 next_action_reasoning = next_reason.strip()
+            _record_trace(
+                self.action_selector,
+                {
+                    "candidate_actions": candidate_actions,
+                    "current_step_summary": structured_plan.get("summary") if isinstance(structured_plan, dict) else None,
+                },
+                {
+                    "chosen_action": next_action,
+                    "reasoning": next_action_reasoning,
+                },
+            )
 
         return TownAgentResponse(
             plan_structured=structured_plan,

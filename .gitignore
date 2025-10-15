@@ -17,7 +17,10 @@ venv/
 env/
 
 # Compilation outputs (large files, store in Drive)
-
+mini-town-env/
+node_modules/
+dist/
+__pycache__/
 
 # Node
 node_modules/
