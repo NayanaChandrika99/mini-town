@@ -51,11 +51,11 @@ except FileNotFoundError:
     logger.error(f"Configuration file not found at {config_path}")
     logger.error("Please ensure config.yml exists in the project root")
     raise
-
-USE_TOWN_AGENT_PROGRAM = config.get('compilation', {}).get('use_town_agent_gepa', False)
 except yaml.YAMLError as e:
     logger.error(f"Error parsing config.yml: {e}")
     raise
+
+USE_TOWN_AGENT_PROGRAM = config.get('compilation', {}).get('use_town_agent_gepa', False)
 
 # Initialize FastAPI
 app = FastAPI(title="Mini-Town API")

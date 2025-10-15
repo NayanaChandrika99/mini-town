@@ -14,28 +14,6 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, TypedDict, Tuple
 from pathlib import Path
 
-# Handle JSONAdapter import across DSPy versions.
-JSONAdapter = None
-_adapter_import_errors = []
-for path in (
-    "dspy.adapters.JSONAdapter",
-    "dspy.adapters.JsonAdapter",
-    "dspy.adapters.json_adapter.JSONAdapter",
-    "dspy.json_adapter.JSONAdapter",
-):
-    module_name, attr = path.rsplit(".", 1)
-    try:
-        module = __import__(module_name, fromlist=[attr])
-        JSONAdapter = getattr(module, attr)
-        break
-    except (ImportError, AttributeError) as exc:  # pragma: no cover - import fallback
-        _adapter_import_errors.append(f"{path}: {exc}")
-
-if JSONAdapter is None:  # pragma: no cover - critical failure
-    raise ImportError(
-        "JSONAdapter not found in DSPy installation. Tried imports:\n" + "\n".join(_adapter_import_errors)
-    )
-
 logger = logging.getLogger(__name__)
 
 # Global DSPy configuration
@@ -132,20 +110,6 @@ class PlanOutputDict(TypedDict):
     steps: List[PlanStepDict]
     summary: Optional[str]
 
-
-PLAN_JSON_ADAPTER = JSONAdapter(
-    type=PlanOutputDict,
-    instructions="""
-    Respond with a JSON object that contains a `steps` array. Each step must include:
-      - start: exact time (e.g., "08:15 PM")
-      - end: exact time (same day, >= start)
-      - location: coordinates in the form "(x, y)"
-      - description: concise action text
-      - rationale: short explanation linking to goal/personality or invitation
-    Optionally include `summary` with a one-sentence overview.
-    """.strip(),
-)
-
 class ScoreImportance(dspy.Signature):
     """Rate how important this observation is for the agent's goals.
 
@@ -213,12 +177,11 @@ class PlanDay(dspy.Signature):
     relevant_memories: str = dspy.InputField(desc="Relevant memories from recent past")
 
     reasoning: str = dspy.OutputField(desc="Explain how you preserved exact event times from invitations")
-    plan: PlanOutputDict = dspy.OutputField(
+    plan: str = dspy.OutputField(
         desc=(
-            "Structured JSON object with a `steps` array. Each step must include start, end, location, description,"
-            " and rationale fields, preserving invitation times exactly."
-        ),
-        adapter=PLAN_JSON_ADAPTER,
+            "Respond with a JSON object containing a `steps` array (start/end/location/description/rationale) that"
+            " preserves every invitation time exactly. Include optional summary field."
+        )
     )
 
 
