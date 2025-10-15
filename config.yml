@@ -1,10 +1,12 @@
 simulation:
   num_agents: 3  # Start with 3 for Day 0.5
-  tick_interval: 2.0  # Will be adjusted based on latency
+  tick_interval: 1.0  # Faster ticks for responsive demo
   reflect_threshold: 3.5
   map_width: 400  # Reduced from 800 for Day 5 testing
   map_height: 300  # Reduced from 600 for Day 5 testing
   perception_radius: 50  # Distance at which agents can perceive each other
+  agent_speed: 4.0  # Pixels per tick for interactive demo
+  minutes_per_tick: 5  # Simulation clock advance per tick
 
 llm:
   provider: together  # groq | together | openai
@@ -36,6 +38,7 @@ compilation:
     max_bootstrapped_demos: 4
     max_labeled_demos: 5
     num_trials: 10
+  use_town_agent_gepa: false
 
 database:
   path: data/town_v2.db

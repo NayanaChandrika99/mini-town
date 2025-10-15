@@ -9,6 +9,41 @@ Compiles the ScoreImportance module to improve observation importance scoring.
 
 **Status**: ✅ Ready to run in Google Colab
 
+### `compile_planner.py`
+Python script to compile PlanDay module using GEPA optimizer.
+
+**Status**: ✅ Ready to run locally or in Colab
+
+### `compile_ui_signatures.py`
+**NEW** - Python script to compile UI enhancement signatures using BootstrapFewShot optimizer.
+
+**Signatures Compiled**:
+- **PlanStepExplainer**: Generates contextual explanations for agent plan steps
+- **ObservationSummarizer**: Synthesizes observations into thematic bullet points
+
+**Status**: ✅ Ready to run locally
+
+**Usage**:
+```bash
+# Compile both signatures (default)
+python compile_ui_signatures.py
+
+# Compile only step explainer
+python compile_ui_signatures.py --signature step_explainer
+
+# Custom parameters
+python compile_ui_signatures.py --max-demos 8 --provider groq
+```
+
+**Requirements**:
+- Seeds: `../seeds/step_explainer_v1.json` (24 examples)
+- Seeds: `../seeds/observation_summarizer_v1.json` (20 examples)
+- API key for chosen provider (Groq/Together/OpenAI)
+
+**Expected Runtime**: 5-10 minutes per signature (much faster than GEPA)
+
+**Optimizer**: BootstrapFewShot (lightweight, few-shot learning focused)
+
 **Requirements**:
 - Google Colab account (free or Pro recommended)
 - Groq API key (get from https://console.groq.com/)

@@ -5,7 +5,7 @@ from typing import Optional
 
 from fastapi import Depends, FastAPI, Header, HTTPException, status
 
-from backend.dspy_modules import configure_dspy
+from backend.dspy_modules import configure_dspy, format_plan_text
 
 from .config import AppState, load_settings
 from .loader import CompiledModuleCache
@@ -127,7 +127,11 @@ def plan_day(
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(exc)) from exc
 
     reasoning = getattr(result, "reasoning", "")
-    plan = getattr(result, "plan", "")
+    raw_plan = getattr(result, "plan", "")
+    if isinstance(raw_plan, dict):
+        plan = format_plan_text(raw_plan)
+    else:
+        plan = str(raw_plan)
 
     return PlannerResponse(reasoning=reasoning, plan=plan, compiled=compiled)
 

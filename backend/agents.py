@@ -3,17 +3,40 @@ Agent class for Mini-Town.
 Day 0.5: Hardcoded random walk behavior + perception.
 Day 2: LLM-based importance scoring and reflection.
 Day 6: Plan execution with navigation.
+Day 7+: TownAgent composite program integration.
 """
 
+import asyncio
 import re
 import random
 import logging
 import math
+from collections import deque
 from enum import Enum
 from datetime import datetime, timedelta
-from typing import List, Dict, Any, Optional, Tuple
-from dspy_modules import score_observation, generate_reflection, generate_plan, get_planner_source
-from utils import timed_llm_call
+from pathlib import Path
+from typing import List, Dict, Any, Optional, Tuple, Deque
+from dspy_modules import (
+    score_observation,
+    generate_reflection,
+    generate_plan,
+    get_planner_source,
+    ObservationScore,
+    PlanGeneration,
+    PlanValidation,
+    get_town_agent_program,
+)
+from utils import timed_llm_call, generate_embedding
+from runtime.executor import (
+    navigate_for_plan,
+    select_active_step,
+    select_upcoming_step,
+    dispatch_next_action,
+    steps_from_plan_text,
+    steps_from_structured_plan,
+)
+from runtime.dataset_logger import log_town_agent_episode
+from telemetry import PlanTelemetryPayload, record_plan_validation
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +69,9 @@ class Agent:
         perception_radius: float = 50.0,
         retrieval_alpha: float = 0.5,
         retrieval_beta: float = 0.3,
-        retrieval_gamma: float = 0.2
+        retrieval_gamma: float = 0.2,
+        speed: float = 2.0,
+        use_town_agent_program: bool = False,
     ):
         """Initialize agent with position and metadata."""
         self.id = agent_id
@@ -57,12 +82,27 @@ class Agent:
         self.personality = personality
         self.state = "active"
         self.current_plan = "Wandering around"
+        self.current_plan_structured: Optional[Dict[str, Any]] = None
         self.plan_last_updated = None  # Timestamp of last plan update
         self.plan_source: str = "unknown"  # Tracks how the plan was generated
+        self.last_plan_validation: Optional[PlanValidation] = None
 
-        # Plan execution (Day 6)
+        # Plan execution (Day 6+)
         self.parsed_plan = []  # List of parsed plan steps
         self._last_parsed_time = None  # Track when plan was last parsed
+        self.plan_preset_id: Optional[str] = None
+        self.current_step_index: int = 0
+        self.last_plan_step: Optional[Dict[str, Any]] = None
+        self.last_plan_step_switch_tick: Optional[int] = None
+        self.last_simulation_minutes: Optional[int] = None
+        self.plan_time_offset: int = 0
+        self.completed_conversation_steps: set[str] = set()
+        self.use_town_agent_program = use_town_agent_program
+        self.pending_next_action: Optional[str] = None
+        self.pending_next_action_reasoning: Optional[str] = None
+        self.last_executed_action: Optional[str] = None
+        self.last_action_reasoning: Optional[str] = None
+        self.available_actions: List[str] = ["move", "talk", "wait", "observe"]
 
         # Map boundaries
         self.map_width = map_width
@@ -72,8 +112,8 @@ class Agent:
         self.perception_radius = perception_radius
 
         # Movement parameters for random walk
-        self.speed = 2.0  # pixels per tick
-        self.direction_change_probability = 0.2  # Chance to change direction
+        self.speed = speed  # pixels per tick
+        self.direction_change_probability = 0.25  # Chance to change direction
 
         # Current velocity
         self.vx = 0.0
@@ -91,9 +131,16 @@ class Agent:
         # Action/context
         self.action_type = ActionType.EXPLORE
         self._queued_observations: List[str] = []
+        self.recent_observations: Deque[Dict[str, Any]] = deque(maxlen=5)
         self._loiter_target: Optional[Tuple[float, float]] = None
         self._loiter_retarget_at: Optional[datetime] = None
         self._next_conversation_time: datetime = datetime.now()
+        self._next_plan_update_tick: int = 0
+
+        # Enhanced UI fields (populated by DSPy signatures)
+        self.step_explanation: Optional[str] = None
+        self.observation_summary: Optional[str] = None
+        self.recent_conversations: List[Dict[str, Any]] = []
 
         logger.info(f"Agent {self.id} ({self.name}) initialized at ({x}, {y})")
 
@@ -198,12 +245,22 @@ class Agent:
         partner_line = f"Had a conversation with {self.name} at the event."
         partner.queue_observation(partner_line)
 
+        # Track conversation for both agents
+        conversation_summary = f"{self.name} and {partner.name} had a conversation"
+        self.track_conversation(conversation_summary, [self.id, partner.id])
+        partner.track_conversation(conversation_summary, [self.id, partner.id])
+
         partner._set_action(ActionType.CONVERSE)
         self._set_action(ActionType.CONVERSE)
 
         return [self_line]
 
-    def update(self, other_agents: List['Agent']) -> Dict[str, Any]:
+    def update(
+        self,
+        other_agents: List['Agent'],
+        simulation_minutes: Optional[int] = None,
+        sim_tick: Optional[int] = None,
+    ) -> Dict[str, Any]:
         """
         Update agent state for one tick, including navigation, waiting, and loitering behavior.
 
@@ -211,7 +268,12 @@ class Agent:
             Dict with agent state and observations
         """
         current_time = datetime.now()
+        sim_minutes = simulation_minutes if simulation_minutes is not None else current_time.hour * 60 + current_time.minute
+        self.last_simulation_minutes = sim_minutes
         extra_observations: List[str] = []
+
+        current_step = None
+        upcoming_step = None
 
         if self.current_plan and self.plan_last_updated:
             if not self.parsed_plan or self._last_parsed_time != self.plan_last_updated:
@@ -221,40 +283,34 @@ class Agent:
                     logger.info(f"Agent {self.id} parsed plan into {len(self.parsed_plan)} steps")
 
             if self.parsed_plan:
-                current_step = self.get_current_step(self.parsed_plan, current_time)
-                upcoming_step = self.get_upcoming_step(self.parsed_plan, current_time, window_minutes=15)
+                current_step, current_index = select_active_step(
+                    self.parsed_plan,
+                    sim_minutes,
+                    getattr(self, "plan_time_offset", 0),
+                )
+                upcoming_step = select_upcoming_step(
+                    self.parsed_plan,
+                    sim_minutes,
+                    getattr(self, "plan_time_offset", 0),
+                    window_minutes=15,
+                )
 
-                if current_step and current_step.get('location'):
-                    target_x, target_y = current_step['location']
-                    distance = math.hypot(self.x - target_x, self.y - target_y)
+                extra_observations.extend(
+                    navigate_for_plan(
+                        agent=self,
+                        current_step=current_step,
+                        upcoming_step=upcoming_step,
+                        other_agents=other_agents,
+                        current_time=current_time,
+                        action_enum=ActionType,
+                    )
+                )
 
-                    if distance > 12.0:
-                        logger.debug(f"Agent {self.id} navigating to active step: {current_step['description'][:50]}...")
-                        self._set_action(ActionType.NAVIGATE)
-                        self.navigate_to(target_x, target_y)
-                        self._loiter_target = None
-                    else:
-                        extra_observations.extend(
-                            self._loiter_and_socialize(target_x, target_y, other_agents, current_time)
-                        )
-                elif upcoming_step and upcoming_step.get('location'):
-                    target_x, target_y = upcoming_step['location']
-                    distance = math.hypot(self.x - target_x, self.y - target_y)
-
-                    if distance < 10.0:
-                        self.vx = 0
-                        self.vy = 0
-                        self._loiter_target = None
-                        self._set_action(ActionType.WAIT)
-                        logger.debug(f"Agent {self.id} waiting for upcoming event: {upcoming_step['description'][:50]}...")
-                    else:
-                        logger.debug(f"Agent {self.id} heading toward upcoming event: {upcoming_step['description'][:50]}...")
-                        self._set_action(ActionType.NAVIGATE)
-                        self.navigate_to(target_x, target_y)
-                else:
-                    self._loiter_target = None
-                    self._set_action(ActionType.EXPLORE)
-                    self._random_walk()
+                if current_step and self.last_plan_step is not current_step:
+                    self.last_plan_step = current_step
+                    if current_index is not None:
+                        self.current_step_index = current_index
+                    self.last_plan_step_switch_tick = sim_tick
             else:
                 self._loiter_target = None
                 self._set_action(ActionType.EXPLORE)
@@ -271,6 +327,32 @@ class Agent:
             observations.extend(self._queued_observations)
             self._queued_observations.clear()
 
+        if self.pending_next_action:
+            dispatch_observations = dispatch_next_action(
+                agent=self,
+                action=self.pending_next_action,
+                current_step=current_step or upcoming_step,
+                other_agents=other_agents,
+                current_time=current_time,
+                action_enum=ActionType,
+            )
+            if dispatch_observations:
+                observations.extend(dispatch_observations)
+            self.last_executed_action = self.pending_next_action
+            self.last_action_reasoning = self.pending_next_action_reasoning
+            self.pending_next_action = None
+            self.pending_next_action_reasoning = None
+
+        active_step_payload: Optional[Dict[str, Any]] = None
+        if self.last_plan_step:
+            loc = self.last_plan_step.get('location')
+            active_step_payload = {
+                "start": self.last_plan_step.get('start_time_str'),
+                "end": self.last_plan_step.get('end_time_str'),
+                "description": self.last_plan_step.get('description'),
+                "location": list(loc) if loc else None,
+            }
+
         if observations:
             logger.info(
                 f"Agent {self.id} ({self.name}) at ({self.x:.1f}, {self.y:.1f}) "
@@ -286,7 +368,11 @@ class Agent:
             "observations": observations,
             "current_plan": self.current_plan,
             "plan_source": self.plan_source,
-            "plan_last_updated": self.plan_last_updated.isoformat() if self.plan_last_updated else None
+            "plan_last_updated": self.plan_last_updated.isoformat() if self.plan_last_updated else None,
+            "plan_preset_id": self.plan_preset_id,
+            "active_plan_step": active_step_payload,
+            "simulation_minutes": sim_minutes,
+            "current_step_index": self.current_step_index,
         }
 
     def _random_walk(self):
@@ -375,6 +461,16 @@ class Agent:
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert agent to dictionary for serialization."""
+        active_step_payload = None
+        if self.last_plan_step:
+            loc = self.last_plan_step.get('location')
+            active_step_payload = {
+                "start": self.last_plan_step.get('start_time_str'),
+                "end": self.last_plan_step.get('end_time_str'),
+                "description": self.last_plan_step.get('description'),
+                "location": list(loc) if loc else None,
+                "explanation": self.last_plan_step.get('explanation'),
+            }
         return {
             "id": self.id,
             "name": self.name,
@@ -384,8 +480,29 @@ class Agent:
             "personality": self.personality,
             "state": self.state,
             "current_plan": self.current_plan,
+            "structured_plan": self.current_plan_structured,
+            "plan_validation": (
+                {
+                    "preserved_event_times": self.last_plan_validation.preserved_event_times,
+                    "missing_event_times": self.last_plan_validation.missing_event_times,
+                    "overlaps_detected": self.last_plan_validation.overlaps_detected,
+                    "invalid_locations": self.last_plan_validation.invalid_locations,
+                }
+                if self.last_plan_validation
+                else None
+            ),
             "plan_source": self.plan_source,
-            "plan_last_updated": self.plan_last_updated.isoformat() if self.plan_last_updated else None
+            "plan_last_updated": self.plan_last_updated.isoformat() if self.plan_last_updated else None,
+            "plan_preset_id": self.plan_preset_id,
+            "current_step_index": self.current_step_index,
+            "active_plan_step": active_step_payload,
+            "observations": list(self.recent_observations),
+            "step_explanation": self.step_explanation,
+            "observation_summary": self.observation_summary,
+            "recent_conversations": self.recent_conversations,
+            "use_town_agent": self.use_town_agent_program,
+            "last_action": self.last_executed_action,
+            "last_action_reasoning": self.last_action_reasoning,
         }
 
     async def score_and_store_observation(self, obs: str, memory_store) -> float:
@@ -399,11 +516,12 @@ class Agent:
         Returns:
             Importance score (0-1 normalized)
         """
-        from utils import generate_embedding
+        score_value = 5
+        reasoning_text: Optional[str] = None
+        timestamp = datetime.now()
 
         try:
-            # Score via LLM (1-10)
-            score_raw = await timed_llm_call(
+            score_result = await timed_llm_call(
                 score_observation,
                 signature_name="ScoreImportance",
                 timeout=5.0,
@@ -412,12 +530,20 @@ class Agent:
                 agent_personality=self.personality
             )
 
-            # Normalize to 0-1
-            importance = score_raw / 10.0
+            if isinstance(score_result, ObservationScore):
+                score_value = score_result.score
+                reasoning_text = self._summarize_reasoning(score_result.reasoning)
+            else:
+                score_value = int(score_result)
+
+            importance = max(0.0, min(1.0, score_value / 10.0))
 
         except Exception as e:
             logger.warning(f"Agent {self.id} LLM scoring failed: {e}, using default")
             importance = 0.3  # Fallback
+            score_value = int(importance * 10)
+            reasoning_text = "Scoring failed; defaulted to importance 0.3"
+            reasoning_text = self._summarize_reasoning(reasoning_text)
             self.state = "confused"
 
         # Generate embedding
@@ -429,8 +555,16 @@ class Agent:
             content=obs,
             importance=importance,
             embedding=embedding,
-            timestamp=datetime.now()
+            timestamp=timestamp
         )
+
+        self.recent_observations.appendleft({
+            "text": obs,
+            "score": score_value,
+            "importance": round(importance, 3),
+            "reasoning": reasoning_text,
+            "timestamp": timestamp.isoformat()
+        })
 
         # Accumulate for reflection
         self.reflection_score += importance
@@ -500,7 +634,118 @@ class Agent:
             self.state = "confused"
             return None
 
-    async def update_plan(self, memory_store, current_time: Optional[datetime] = None) -> Optional[str]:
+    async def _update_plan_with_town_agent(
+        self,
+        memory_store,
+        current_time: datetime,
+        simulation_minutes: Optional[int],
+        recent_events: List[str],
+        relevant_memories: List[str],
+    ) -> Optional[str]:
+        program = get_town_agent_program()
+
+        recent_obs_text = [obs.get("text", "") for obs in list(self.recent_observations)]
+
+        try:
+            response = await asyncio.to_thread(
+                program,
+                agent_name=self.name,
+                agent_goal=self.goal,
+                agent_personality=self.personality,
+                current_time=current_time.strftime('%I:%M %p'),
+                current_location=f"({self.x:.0f}, {self.y:.0f})",
+                recent_observations=recent_obs_text,
+                recent_events=recent_events,
+                relevant_memories=relevant_memories,
+                candidate_actions=self.available_actions,
+            )
+        except Exception as exc:  # noqa: BLE001
+            logger.error(f"Agent {self.id} TownAgent program failed: {exc}")
+            self.state = "confused"
+            return None
+
+        plan_text = response.plan_text
+        self.current_plan = plan_text
+        self.current_plan_structured = response.plan_structured
+        self.last_plan_validation = response.plan_validation
+        self.plan_last_updated = current_time
+
+        compiled_path = Path(__file__).parent.parent / "compiled" / "compiled_town_agent.json"
+        self.plan_source = "town_agent_compiled" if compiled_path.exists() else "town_agent"
+
+        self.plan_preset_id = None
+        self.parsed_plan = self.parse_plan()
+        self.current_step_index = 0
+        self.last_plan_step = None
+        self.last_plan_step_switch_tick = None
+        self._last_parsed_time = self.plan_last_updated
+        self.align_plan_execution(simulation_minutes)
+        self.completed_conversation_steps.clear()
+
+        self.pending_next_action = response.next_action
+        self.pending_next_action_reasoning = response.next_action_reasoning
+        self.last_executed_action = None
+        self.last_action_reasoning = None
+
+        if response.reflection:
+            reflection_text = response.reflection.strip()
+            if reflection_text:
+                memory_store.store_memory(
+                    agent_id=self.id,
+                    content=f"[REFLECTION] {reflection_text}",
+                    importance=0.9,
+                    embedding=generate_embedding(reflection_text),
+                    timestamp=current_time,
+                )
+                self.reflection_score = 0.0
+
+        record_plan_validation(
+            PlanTelemetryPayload(
+                agent_id=self.id,
+                plan_source=self.plan_source,
+                preserved_event_times=self.last_plan_validation.preserved_event_times,
+                missing_event_times=self.last_plan_validation.missing_event_times,
+                overlaps_detected=self.last_plan_validation.overlaps_detected,
+                invalid_locations=self.last_plan_validation.invalid_locations,
+                reasoning=response.next_action_reasoning,
+                summary=response.plan_structured.get("summary") if isinstance(response.plan_structured, dict) else None,
+            )
+        )
+
+        memory_store.update_agent_plan(
+            agent_id=self.id,
+            plan=self.current_plan,
+            plan_source=self.plan_source,
+            plan_updated_at=current_time,
+        )
+
+        recent_obs_text = [obs.get("text", "") for obs in list(self.recent_observations)]
+        log_town_agent_episode(
+            agent_id=self.id,
+            agent_name=self.name,
+            agent_goal=self.goal,
+            agent_personality=self.personality,
+            current_time=current_time.strftime('%I:%M %p'),
+            current_location=f"({self.x:.0f}, {self.y:.0f})",
+            recent_observations=recent_obs_text,
+            recent_events=recent_events,
+            relevant_memories=relevant_memories,
+            candidate_actions=self.available_actions,
+            plan_text=plan_text,
+            plan_structured=response.plan_structured,
+            plan_source=self.plan_source,
+            use_town_agent=True,
+            notes=response.plan_structured.get("summary") if isinstance(response.plan_structured, dict) else None,
+        )
+
+        return plan_text
+
+    async def update_plan(
+        self,
+        memory_store,
+        current_time: Optional[datetime] = None,
+        simulation_minutes: Optional[int] = None,
+    ) -> Optional[str]:
         """
         Generate or update the agent's plan based on recent events and memories.
 
@@ -567,13 +812,27 @@ class Agent:
         recent_events = recent_events[:5]
         relevant_memories = relevant_memories[:5]
 
+        if self.use_town_agent_program:
+            plan_text = await self._update_plan_with_town_agent(
+                memory_store,
+                current_time,
+                simulation_minutes,
+                recent_events,
+                relevant_memories,
+            )
+            if plan_text:
+                logger.info(f"Agent {self.id} plan (TownAgent): {plan_text[:100]}...")
+                return plan_text
+            # Fall back to baseline if TownAgent fails
+            logger.warning(f"Agent {self.id} falling back to baseline planner after TownAgent failure")
+
         try:
             # Format current time and location
             time_str = current_time.strftime('%I:%M %p')
             location_str = f"({self.x:.0f}, {self.y:.0f})"
 
             # Generate plan via LLM
-            plan = await timed_llm_call(
+            plan_result: PlanGeneration = await timed_llm_call(
                 generate_plan,
                 signature_name="PlanDay",
                 timeout=5.0,
@@ -585,12 +844,23 @@ class Agent:
                 relevant_memories=relevant_memories
             )
 
-            logger.info(f"Agent {self.id} plan: {plan[:100]}...")
+            plan_text = plan_result.text
+            logger.info(f"Agent {self.id} plan: {plan_text[:100]}...")
 
             # Update agent's current plan
-            self.current_plan = plan
+            self.current_plan = plan_text
+            self.current_plan_structured = plan_result.structured
+            self.last_plan_validation = plan_result.validation
             self.plan_last_updated = current_time
             self.plan_source = get_planner_source()
+            self.plan_preset_id = None
+            self.parsed_plan = self.parse_plan()
+            self.current_step_index = 0
+            self.last_plan_step = None
+            self.last_plan_step_switch_tick = None
+            self._last_parsed_time = self.plan_last_updated
+            self.align_plan_execution(simulation_minutes)
+            self.completed_conversation_steps.clear()
             memory_store.update_agent_plan(
                 agent_id=self.id,
                 plan=self.current_plan,
@@ -598,13 +868,178 @@ class Agent:
                 plan_updated_at=current_time,
             )
 
-            return plan
+            summary = None
+            if isinstance(self.current_plan_structured, dict):
+                summary = self.current_plan_structured.get("summary")
+            record_plan_validation(
+                PlanTelemetryPayload(
+                    agent_id=self.id,
+                    plan_source=self.plan_source,
+                    preserved_event_times=self.last_plan_validation.preserved_event_times if self.last_plan_validation else [],
+                    missing_event_times=self.last_plan_validation.missing_event_times if self.last_plan_validation else [],
+                    overlaps_detected=bool(self.last_plan_validation.overlaps_detected) if self.last_plan_validation else False,
+                    invalid_locations=self.last_plan_validation.invalid_locations if self.last_plan_validation else [],
+                    reasoning=plan_result.reasoning,
+                    summary=summary,
+                )
+            )
+
+            log_town_agent_episode(
+                agent_id=self.id,
+                agent_name=self.name,
+                agent_goal=self.goal,
+                agent_personality=self.personality,
+                current_time=time_str,
+                current_location=location_str,
+                recent_observations=[obs.get("text", "") for obs in list(self.recent_observations)],
+                recent_events=recent_events,
+                relevant_memories=relevant_memories,
+                candidate_actions=self.available_actions,
+                plan_text=plan_text,
+                plan_structured=plan_result.structured,
+                plan_source=self.plan_source,
+                use_town_agent=False,
+                notes=summary,
+            )
+
+            return plan_text
 
         except Exception as e:
             logger.error(f"Agent {self.id} planning failed: {e}")
             self.state = "confused"
             self.plan_source = "error"
             return None
+
+    async def generate_step_explanation(self, memory_store) -> Optional[str]:
+        """
+        Generate an explanation for why the current plan step matters.
+
+        Args:
+            memory_store: MemoryStore instance
+
+        Returns:
+            Explanation string if generated, None otherwise
+        """
+        if not self.last_plan_step or not self.last_plan_step.get('description'):
+            return None
+            
+        try:
+            from dspy_modules import explain_plan_step
+            from utils import generate_embedding
+            
+            # Get recent memories for context
+            query_text = f"{self.last_plan_step.get('description')} and {self.goal}"
+            query_embedding = generate_embedding(query_text)
+            memories = memory_store.retrieve_memories_by_vector(
+                agent_id=self.id,
+                query_embedding=query_embedding,
+                top_k=5,
+                alpha=0.5,
+                beta=0.3,
+                gamma=0.2
+            )
+            
+            memories_str = "\n".join([f"- {mem['content']}" for mem in memories]) if memories else "No recent context"
+            location_str = f"({self.x:.0f}, {self.y:.0f})"
+            
+            result = await explain_plan_step(
+                agent_name=self.name,
+                agent_goal=self.goal,
+                agent_personality=self.personality,
+                step_summary=self.last_plan_step.get('description', 'Current task'),
+                location=location_str,
+                recent_memories=memories_str
+            )
+            
+            explanation = result.text if hasattr(result, 'text') else str(result)
+            self.step_explanation = explanation
+            
+            # Store explanation in the plan step dict as well
+            if self.last_plan_step:
+                self.last_plan_step['explanation'] = explanation
+            
+            logger.debug(f"Agent {self.id} step explanation: {explanation[:80]}...")
+            return explanation
+            
+        except Exception as e:
+            logger.warning(f"Agent {self.id} step explanation failed: {e}")
+            return None
+
+    async def generate_observation_summary(self) -> Optional[str]:
+        """
+        Generate a summary of high-importance recent observations.
+        
+        Returns:
+            Summary string if generated, None otherwise
+        """
+        if not self.recent_observations or len(self.recent_observations) == 0:
+            return None
+            
+        try:
+            from dspy_modules import summarize_observations
+            
+            # Filter for higher-importance observations (>= 0.5)
+            important_obs = [
+                obs for obs in self.recent_observations 
+                if obs.get('importance', 0) >= 0.5
+            ]
+            
+            if not important_obs:
+                return None
+            
+            # Format observations as bullet list
+            obs_lines = []
+            for obs in important_obs[:10]:  # Limit to 10 most recent
+                importance = obs.get('importance', 0)
+                text = obs.get('text', '')
+                obs_lines.append(f"• [{importance:.2f}] {text}")
+            
+            observations_str = "\n".join(obs_lines)
+            
+            result = await summarize_observations(
+                agent_name=self.name,
+                agent_goal=self.goal,
+                observations=observations_str
+            )
+            
+            summary = result.summary if hasattr(result, 'summary') else str(result)
+            self.observation_summary = summary
+            
+            logger.debug(f"Agent {self.id} observation summary: {summary[:80]}...")
+            return summary
+            
+        except Exception as e:
+            logger.warning(f"Agent {self.id} observation summary failed: {e}")
+            return None
+
+    def track_conversation(self, conversation_text: str, participants: Optional[List[int]] = None):
+        """
+        Track a conversation event for display in the UI.
+        
+        Args:
+            conversation_text: The conversation content or summary
+            participants: List of agent IDs involved (optional)
+        """
+        # Keep only last 5 conversations
+        max_conversations = 5
+        
+        conversation_digest = {
+            "id": f"conv-{self.id}-{datetime.now().isoformat()}",
+            "timestamp": datetime.now().isoformat(),
+            "summary": conversation_text,
+            "agents": participants if participants else [self.id],
+            "step_description": self.last_plan_step.get('description') if self.last_plan_step else None
+        }
+        
+        self.recent_conversations.insert(0, conversation_digest)
+        
+        # Keep only most recent conversations
+        if len(self.recent_conversations) > max_conversations:
+            self.recent_conversations = self.recent_conversations[:max_conversations]
+
+    @staticmethod
+    def _time_to_minutes(time_obj: datetime) -> int:
+        return time_obj.hour * 60 + time_obj.minute
 
     def parse_plan(self) -> List[Dict[str, Any]]:
         """
@@ -613,112 +1048,78 @@ class Agent:
         Returns:
             List of plan step dicts with keys: start_time, end_time, location, description
         """
+        if self.current_plan_structured:
+            steps_structured = steps_from_structured_plan(self.current_plan_structured)
+            if steps_structured:
+                logger.debug("Agent %s parsed %d structured plan steps", self.id, len(steps_structured))
+                return steps_structured
+
         if not self.current_plan:
             return []
 
-        steps = []
-
-        # Regex to match time ranges (e.g., "03:00 PM - 03:30 PM: Description")
-        time_pattern = r'(\d{1,2}:\d{2}\s*[AP]M)\s*-\s*(\d{1,2}:\d{2}\s*[AP]M):\s*(.*?)(?=\d{1,2}:\d{2}\s*[AP]M|$)'
-
-        # Regex to match location coordinates (e.g., "(200, 150)")
-        location_pattern = r'\((\d+(?:\.\d+)?),\s*(\d+(?:\.\d+)?)\)'
-
         try:
-            for match in re.finditer(time_pattern, self.current_plan, re.DOTALL):
-                start_time_str = match.group(1).strip()
-                end_time_str = match.group(2).strip()
-                description = match.group(3).strip()
-
-                # Parse times (assume same day, just comparing times)
-                try:
-                    start_time = datetime.strptime(start_time_str, "%I:%M %p").time()
-                    end_time = datetime.strptime(end_time_str, "%I:%M %p").time()
-                except ValueError:
-                    logger.warning(f"Agent {self.id} could not parse time: {start_time_str} - {end_time_str}")
-                    continue
-
-                # Extract location if present
-                loc_match = re.search(location_pattern, description)
-                location = None
-                if loc_match:
-                    try:
-                        x = float(loc_match.group(1))
-                        y = float(loc_match.group(2))
-                        location = (x, y)
-                    except ValueError:
-                        logger.warning(f"Agent {self.id} could not parse location from: {loc_match.group(0)}")
-
-                steps.append({
-                    'start_time': start_time,
-                    'end_time': end_time,
-                    'location': location,
-                    'description': description
-                })
-
-            logger.debug(f"Agent {self.id} parsed {len(steps)} plan steps")
-            return steps
-
-        except Exception as e:
-            logger.error(f"Agent {self.id} plan parsing failed: {e}")
+            steps_text = steps_from_plan_text(self.current_plan)
+            logger.debug("Agent %s parsed %d text plan steps", self.id, len(steps_text))
+            return steps_text
+        except Exception as exc:  # noqa: BLE001
+            logger.error("Agent %s plan parsing failed: %s", self.id, exc)
             return []
 
-    def get_current_step(self, parsed_steps: List[Dict], current_time: datetime) -> Optional[Dict]:
-        """
-        Find the plan step that should be executed at the current time.
+    def align_plan_execution(self, simulation_minutes: Optional[int]) -> None:
+        """Align internal pointers with the simulation clock so steps execute immediately."""
+        if not self.parsed_plan:
+            self.plan_time_offset = 0
+            self.current_step_index = 0
+            return
 
-        Args:
-            parsed_steps: List of parsed plan steps
-            current_time: Current simulation time
+        if simulation_minutes is None:
+            self.plan_time_offset = 0
+            self.current_step_index = 0
+            return
 
-        Returns:
-            Current step dict or None if no step is active
-        """
-        if not parsed_steps:
-            return None
+        first_start = self.parsed_plan[0].get('start_minutes')
+        if first_start is not None:
+            self.plan_time_offset = first_start - simulation_minutes
+        else:
+            self.plan_time_offset = 0
 
-        current_time_only = current_time.time()
+        current_step, current_index = self.get_current_step(self.parsed_plan, simulation_minutes)
+        if current_step is not None:
+            self.last_plan_step = current_step
+            if current_index is not None:
+                self.current_step_index = current_index
+        else:
+            # Reset to first step if none active yet (plan hasn't started)
+            self.current_step_index = 0
+            if self.parsed_plan:
+                self.last_plan_step = None
 
-        for step in parsed_steps:
-            start = step['start_time']
-            end = step['end_time']
+    def get_current_step(self, parsed_steps: List[Dict[str, Any]], simulation_minutes: Optional[int]) -> Tuple[Optional[Dict[str, Any]], Optional[int]]:
+        """Return the active plan step (and index) for the given simulation minute."""
+        return select_active_step(parsed_steps, simulation_minutes, getattr(self, "plan_time_offset", 0))
 
-            # Handle time comparison (simple: assume same day)
-            if start <= current_time_only <= end:
-                return step
-
-        return None
-
-    def get_upcoming_step(self, parsed_steps: List[Dict], current_time: datetime, window_minutes: int = 15) -> Optional[Dict]:
-        """
-        Find the next plan step that starts within the specified time window.
-
-        This is used to allow agents to arrive early at event locations and wait.
-
-        Args:
-            parsed_steps: List of parsed plan steps
-            current_time: Current simulation time
-            window_minutes: Look ahead this many minutes for upcoming steps
-
-        Returns:
-            Upcoming step dict or None if no upcoming step within window
-        """
-        if not parsed_steps:
-            return None
-
-        current_time_only = current_time.time()
-        future_time = (current_time + timedelta(minutes=window_minutes)).time()
-
-        for step in parsed_steps:
-            start = step['start_time']
-
-            # Check if step starts within the window
-            # Handle simple case (same day comparison)
-            if current_time_only < start <= future_time:
-                return step
-
-        return None
+    def get_upcoming_step(self, parsed_steps: List[Dict[str, Any]], simulation_minutes: Optional[int], window_minutes: int = 15) -> Optional[Dict[str, Any]]:
+        return select_upcoming_step(
+            parsed_steps,
+            simulation_minutes,
+            getattr(self, "plan_time_offset", 0),
+            window_minutes=window_minutes,
+        )
 
     def __repr__(self) -> str:
         """String representation of agent."""
         return f"Agent({self.id}, {self.name}, x={self.x:.1f}, y={self.y:.1f})"
+    def _summarize_reasoning(self, reasoning: Optional[str]) -> Optional[str]:
+        if not reasoning:
+            return None
+
+        summary = reasoning.strip()
+        summary = summary.replace("Reasoning:", "").strip()
+        if "Score:" in summary:
+            summary = summary.split("Score:")[0].strip()
+
+        # Split into sentences and keep the last meaningful one
+        sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', summary) if s.strip()]
+        if sentences:
+            return sentences[-1]
+        return summary[:200]

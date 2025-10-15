@@ -1,0 +1,40 @@
+{
+  "predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "python\n# Task Instructions\n\n## Task Description\nThe task involves rating the importance of a given observation for an agent's goals. The agent has a specific goal and personality, and the observation is presented as a piece of information that may be relevant to the agent's goal.\n\n## Input Format\nThe input consists of three components:\n- `observation`: A piece of information that may be relevant to the agent's goal.\n- `agent_goal`: The agent's primary goal, which is a string describing what the agent is trying to achieve.\n- `agent_personality`: A dictionary describing the agent's personality traits, which may influence their behavior and decision-making.\n\n## Task Requirements\nThe task requires the assistant to:\n- Read the input components carefully and identify the relevance of the observation to the agent's goal.\n- Consider the agent's personality traits and how they may influence their behavior and decision-making.\n- Assign a score to the observation based on its relevance to the agent's goal, with the following criteria:\n  - 1-2: Trivial, background noise (e.g., \"grass is green\")\n  - 3-4: Mildly interesting but not actionable\n  - 5-6: Relevant to goals, worth remembering\n  - 7-8: Directly impacts current plans or goals\n  - 9-10: Life-changing, urgent, critical to goals\n\n## Domain-Specific Factual Information\nBased on the provided examples, the following domain-specific factual information can be inferred:\n- The agent's goal is often related to social interactions and relationships.\n- The agent's personality traits are often related to their behavior and decision-making.\n- The observation is often a piece of information that may be relevant to the agent's goal, such as a social invitation, a unique opportunity, or a potential conflict.\n- The agent's personality traits may influence their emotional state and ability to focus on their goal.\n- The agent's goal may be impacted by their emotional state and ability to focus.\n- The observation may be relevant to the agent's goal even if it does not provide specific information about the agent's area.\n- The agent's curiosity and attention to detail may lead them to investigate further even if the observation is not directly impactful.\n\n## Generalizable Strategy\nBased on the provided examples, a generalizable strategy can be inferred:\n- Read the input components carefully and identify the relevance of the observation to the agent's goal.\n- Consider the agent's personality traits and how they may influence their behavior and decision-making.\n- Assign a score to the observation based on its relevance to the agent's goal, using the provided criteria.\n\n## Example Use Cases\nThe following are example use cases:\n- Rating the importance of a social invitation for an agent who wants to build relationships in the neighborhood.\n- Evaluating the relevance of a unique opportunity for an agent who wants to make every day an adventure.\n- Assessing the impact of a potential conflict on an agent's goal of building relationships in the neighborhood.\n\n## Evaluation Metrics\nThe evaluation metrics for this task are:\n- Accuracy: The assistant's score is compared to the provided feedback to evaluate its accuracy.\n- Consistency: The assistant's scores are evaluated to ensure consistency with the provided criteria.",
+      "fields": [
+        {
+          "prefix": "Observation:",
+          "description": "What the agent observed"
+        },
+        {
+          "prefix": "Agent Goal:",
+          "description": "Agent's current high-level goal"
+        },
+        {
+          "prefix": "Agent Personality:",
+          "description": "Agent's personality traits"
+        },
+        {
+          "prefix": "Reasoning:",
+          "description": "Brief explanation of score"
+        },
+        {
+          "prefix": "Score:",
+          "description": "Importance score (1-10)"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.12",
+      "dspy": "3.0.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

@@ -311,17 +311,19 @@ class MemoryStore:
                 content,
                 importance,
                 embedding,
-                array_cosine_similarity(embedding, ?::FLOAT[384]) as relevance
+                list_cosine_similarity(embedding, ?) AS relevance
             FROM memories
             WHERE agent_id = ? AND embedding IS NOT NULL
-            ORDER BY array_cosine_similarity(embedding, ?::FLOAT[384]) DESC
+            ORDER BY relevance DESC
             LIMIT ?
-        """, [query_embedding, agent_id, query_embedding, top_k * 3]).fetchall()  # Get more, then re-rank
+        """, [query_embedding, agent_id, top_k * 3]).fetchall()  # Get more, then re-rank
 
         # Compute triad scores
         memories = []
         for row in results:
             mem_id, ts, content, importance, embedding, relevance = row
+            if relevance is None:
+                relevance = 0.0
 
             # Recency score (exponential decay, 1.0 = now, 0.0 = very old)
             time_diff_hours = (current_time - ts).total_seconds() / 3600

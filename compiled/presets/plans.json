@@ -1,0 +1,57 @@
+{
+  "metadata": {
+    "source": "compiled_plan_day_gepa",
+    "created_at": "2025-10-13T00:00:00Z",
+    "notes": "Curated presets derived from GEPA-compiled PlanDay outputs for interactive demo"
+  },
+  "agents": {
+    "1": [
+      {
+        "id": "alice_plaza_welcome",
+        "label": "Plaza Welcome Walk",
+        "summary": "Greet townsfolk at the fountain, then collect insights by the river.",
+        "landmark_id": "plaza_fountain",
+        "plan": "08:05 AM - Pick up pastries from the Market Square bakery for the plaza meetup.\n08:20 AM - Host a quick welcome chat at the Town Plaza Fountain, noting visitors' needs.\n08:45 AM - Walk with Carol to Riverside Park to check the water level and ambience.\n09:10 AM - Jot observations on town vibe while relaxing on the park benches."
+      },
+      {
+        "id": "alice_garden_outreach",
+        "label": "Garden Outreach",
+        "summary": "Lead a short gardening circle near the terrace and recap at the cafe.",
+        "landmark_id": "garden_terrace",
+        "plan": "08:10 AM - Meet Bob at the Garden Terrace to review today's planting tasks.\n08:30 AM - Guide a four-person mini tour of the terrace beds and share optimism.\n09:00 AM - Walk the group back to the Town Plaza Fountain for questions.\n09:20 AM - Capture highlights over tea at the Market Square cafe."
+      }
+    ],
+    "2": [
+      {
+        "id": "bob_garden_diagnostics",
+        "label": "Garden Diagnostics",
+        "summary": "Inspect soil, log metrics, and report findings to the plaza team.",
+        "landmark_id": "garden_terrace",
+        "plan": "08:00 AM - Collect soil moisture readings at the Garden Terrace plots.\n08:25 AM - Compare today's data with last week's notes at the terrace bench.\n08:55 AM - Deliver a concise report to Alice at the Town Plaza Fountain.\n09:15 AM - File observations from the plaza kiosk while crowds gather."
+      },
+      {
+        "id": "bob_observatory_sweep",
+        "label": "Observatory Sweep",
+        "summary": "Check sensors on Observatory Hill and sync with the park stage crew.",
+        "landmark_id": "observatory_hill",
+        "plan": "08:05 AM - Hike to Observatory Hill to inspect the weather instruments.\n08:35 AM - Update the climate log and calibrate the wind vane.\n09:00 AM - Meet Carol at Riverside Park to review emergency plans.\n09:25 AM - Return to the plaza kiosk to publish the morning metrics."
+      }
+    ],
+    "3": [
+      {
+        "id": "carol_logistics_loop",
+        "label": "Logistics Loop",
+        "summary": "Coordinate supplies across the market, plaza, and observatory.",
+        "landmark_id": "market_square",
+        "plan": "08:10 AM - Collect vendor updates from Market Square merchants.\n08:35 AM - Confirm delivery timelines with Alice at the Town Plaza Fountain.\n09:00 AM - Inspect emergency kits up on Observatory Hill.\n09:25 AM - Stage afternoon itineraries back at Riverside Park."
+      },
+      {
+        "id": "carol_community_support",
+        "label": "Community Support",
+        "summary": "Assist new arrivals, refresh the plaza board, and prep the garden.",
+        "landmark_id": "plaza_fountain",
+        "plan": "08:05 AM - Greet newcomers at the Town Plaza Fountain info table.\n08:30 AM - Update the community bulletin with Bob near the plaza kiosk.\n08:50 AM - Deliver supplies to the Garden Terrace shed.\n09:15 AM - Check in with Alice at Riverside Park to review midday tasks."
+      }
+    ]
+  }
+}

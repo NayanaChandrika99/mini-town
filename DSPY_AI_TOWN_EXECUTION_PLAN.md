@@ -1,5 +1,19 @@
 # DSPy × AI Town Integration – Execution Plan
 
+> **2025-10-13 Update:** Convex integration is now deprecated in favour of a direct FastAPI ⇄ Pixi bridge. The Mini‑Town backend exposes `/ai-town/*` REST endpoints + `/ws`; the `ai-town/` Vite frontend consumes them via `useMiniTownWebSocket` and fetch helpers. The sections below remain for historical context, but the active plan focuses on:
+>
+> - Maintaining FastAPI as the single source of truth (DuckDB + DSPy agents).
+> - Delivering AI Town’s Pixi UI from the `ai-town/` directory (no Convex runtime).
+> - Gradually removing unused Convex/Clerk code as we stabilise the new bridge.
+>
+> **Bridge status:**  
+> ✅ `/ai-town/state`, `/ai-town/agents`, `/ai-town/map`, `/ai-town/god/*` implemented.  
+> ✅ WebSocket now broadcasts `{ agents, world, worldMap, system }`.  
+> ✅ Frontend hooks/components ported to REST/WS (`useMiniTownWebSocket`, Pixi map, inspector, God Mode).  
+> ⚠️ Remaining Convex code lives in `convex/` for reference but is excluded from builds (`tsconfig.app.json`).  
+> 📌 Next docs to update: `plan.md`, `DAY7_ENHANCEMENTS_PLAN.md`, error log (capture new testing steps).
+
+
 **Owner:** Mini-Town engineering  
 **Last Updated:** 2025-10-13  
 **Goal:** Keep the Mini-Town DSPy backend while borrowing the AI Town template (Convex + React) and bolting on a reusable GEPA-compiled “brain” service.
@@ -117,6 +131,15 @@ Each phase is modular; you can pause after any milestone and still have a workin
   - SystemPanel now lists active plans with source/recency; AgentInspector shows plan metadata + formatted steps.
   - GodMode gains a “Refresh Plans” action wired to `/god/refresh_plan`; notifications surface success/failure.
   - WebSocket payloads carry plan/source/updated timestamps so the UI reacts in real time.
+- **Interactive demo upgrade** (2025-10-14):
+  - Faster loop (tick 1s, speed 4px) for responsive navigation.
+  - Named landmarks catalog + presets loader (`backend/landmarks.py`, `backend/presets.py`) fed from GEPA compiled output (`compiled/presets/plans.json`).
+  - New control endpoints (`/ai-town/control/*`) for agent selection, plan application, and landmark teleports.
+  - Frontend demo panel (`MiniTownDemoControls.tsx`) consumes the API to drive curated DSPy scenarios.
+- **Simulation clock & DSPy conversations** (2025-10-14):
+  - Introduced configurable simulation clock (`minutes_per_tick`) so plans execute immediately after assignment.
+  - Agents keep active step metadata and UI now surfaces the current block.
+  - Added DSPy-powered `PlanConversation` signature hook: agents meeting on the same step trigger generated dialogue that feeds memories, events, and UI bubbles.
 
 ---
 

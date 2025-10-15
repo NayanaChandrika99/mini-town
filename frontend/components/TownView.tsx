@@ -101,7 +101,7 @@ export default function TownView() {
           </div>
 
           <div className="panel god-card">
-            <GodModeControls systemState={systemState} />
+            <GodModeControls systemState={systemState} agents={agents} />
           </div>
         </div>
       </div>

@@ -1,0 +1,17 @@
+{
+  "compilation_time_hours": 0.26177735838625166,
+  "uncompiled": {
+    "accuracy_within_2": 77.5,
+    "mean_error": 1.475,
+    "exact_matches": 9
+  },
+  "compiled": {
+    "accuracy_within_2": 82.5,
+    "mean_error": 1.375,
+    "exact_matches": 12
+  },
+  "improvement": {
+    "accuracy_delta": 0.0,
+    "mae_delta": 0.10000000000000009
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "compilation_time_hours": 0.14816182295481364,
+  "uncompiled": {
+    "avg": 0.7083333333333334,
+    "high_quality_pct": 41.66666666666667
+  },
+  "compiled": {
+    "avg": 0.8333333333333334,
+    "high_quality_pct": 66.66666666666666
+  },
+  "improvement_pct": 24.999999999999986
+}
