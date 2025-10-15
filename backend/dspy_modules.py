@@ -14,7 +14,27 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, TypedDict, Tuple
 from pathlib import Path
 
-from dspy.adapters import JSONAdapter
+# Handle JSONAdapter import across DSPy versions.
+JSONAdapter = None
+_adapter_import_errors = []
+for path in (
+    "dspy.adapters.JSONAdapter",
+    "dspy.adapters.JsonAdapter",
+    "dspy.adapters.json_adapter.JSONAdapter",
+    "dspy.json_adapter.JSONAdapter",
+):
+    module_name, attr = path.rsplit(".", 1)
+    try:
+        module = __import__(module_name, fromlist=[attr])
+        JSONAdapter = getattr(module, attr)
+        break
+    except (ImportError, AttributeError) as exc:  # pragma: no cover - import fallback
+        _adapter_import_errors.append(f"{path}: {exc}")
+
+if JSONAdapter is None:  # pragma: no cover - critical failure
+    raise ImportError(
+        "JSONAdapter not found in DSPy installation. Tried imports:\n" + "\n".join(_adapter_import_errors)
+    )
 
 logger = logging.getLogger(__name__)
 
