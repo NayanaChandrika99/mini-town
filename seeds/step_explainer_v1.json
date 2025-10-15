@@ -1,0 +1,279 @@
+{
+  "version": "1.0",
+  "created": "2025-10-14",
+  "description": "Plan step explanation seeds for PlanStepExplainer DSPy module compilation",
+  "total_seeds": 24,
+  "categories": {
+    "social": 6,
+    "goal_oriented": 6,
+    "routine": 6,
+    "reactive": 6
+  },
+  "seeds": [
+    {
+      "id": 1,
+      "agent_name": "Alice",
+      "agent_goal": "Build relationships in the neighborhood",
+      "agent_personality": "social, optimistic",
+      "step_summary": "Attend party at Bob's house",
+      "location": "(200, 150)",
+      "recent_memories": "- Bob invited me to a party tonight\n- Carol mentioned she'll also be attending\n- Haven't seen many neighbors lately",
+      "gold_explanation": "Attending Bob's party helps build neighborhood connections and strengthens existing friendships with Carol.",
+      "category": "social"
+    },
+    {
+      "id": 2,
+      "agent_name": "Charlie",
+      "agent_goal": "Maintain community garden",
+      "agent_personality": "organized, punctual",
+      "step_summary": "Water the vegetable beds",
+      "location": "(320, 400)",
+      "recent_memories": "- Garden looked dry yesterday\n- Tomatoes are starting to ripen\n- Dave asked about the garden's progress",
+      "gold_explanation": "Regular watering ensures the vegetables stay healthy and productive, supporting the community garden project.",
+      "category": "goal_oriented"
+    },
+    {
+      "id": 3,
+      "agent_name": "Emma",
+      "agent_goal": "Make every day an adventure",
+      "agent_personality": "impulsive, friendly",
+      "step_summary": "Explore the new neighborhood park",
+      "location": "(450, 250)",
+      "recent_memories": "- Heard about a new park opening nearby\n- Alice mentioned it has interesting paths\n- Looking for something new to do",
+      "gold_explanation": "Exploring the new park offers excitement and discovery, perfectly aligned with seeking daily adventures.",
+      "category": "goal_oriented"
+    },
+    {
+      "id": 4,
+      "agent_name": "David",
+      "agent_goal": "Perfect my coffee brewing technique",
+      "agent_personality": "meticulous, introverted",
+      "step_summary": "Practice pour-over technique at home",
+      "location": "(180, 300)",
+      "recent_memories": "- Read about new brewing ratios\n- Last attempt was too bitter\n- Ordered fresh beans yesterday",
+      "gold_explanation": "Practicing pour-over with fresh beans helps refine technique and improve coffee quality.",
+      "category": "goal_oriented"
+    },
+    {
+      "id": 5,
+      "agent_name": "Fiona",
+      "agent_goal": "Stay healthy and active",
+      "agent_personality": "disciplined, cheerful",
+      "step_summary": "Morning jog around the neighborhood",
+      "location": "(100, 100)",
+      "recent_memories": "- Missed yesterday's workout\n- Weather is perfect today\n- Want to maintain weekly exercise goal",
+      "gold_explanation": "A morning jog maintains fitness routine and takes advantage of ideal weather conditions.",
+      "category": "routine"
+    },
+    {
+      "id": 6,
+      "agent_name": "George",
+      "agent_goal": "Build relationships in the neighborhood",
+      "agent_personality": "curious, talkative",
+      "step_summary": "Chat with neighbors at the cafe",
+      "location": "(350, 200)",
+      "recent_memories": "- Haven't caught up with Emma in a while\n- Cafe is usually busy in the morning\n- Want to learn more about new residents",
+      "gold_explanation": "Morning cafe visits create natural opportunities for casual conversations and meeting new neighbors.",
+      "category": "social"
+    },
+    {
+      "id": 7,
+      "agent_name": "Hannah",
+      "agent_goal": "Learn to paint landscapes",
+      "agent_personality": "patient, creative",
+      "step_summary": "Paint at the scenic overlook",
+      "location": "(500, 450)",
+      "recent_memories": "- Light conditions are best in morning\n- Need to practice perspective\n- Overlook has beautiful views",
+      "gold_explanation": "The scenic overlook offers ideal lighting and subjects for practicing landscape painting techniques.",
+      "category": "goal_oriented"
+    },
+    {
+      "id": 8,
+      "agent_name": "Ian",
+      "agent_goal": "Make every day an adventure",
+      "agent_personality": "spontaneous, energetic",
+      "step_summary": "Join pickup basketball game at park",
+      "location": "(400, 350)",
+      "recent_memories": "- Saw people playing yesterday\n- Haven't played basketball in months\n- Looking for active social activities",
+      "gold_explanation": "Joining the basketball game combines physical activity with social interaction and spontaneous fun.",
+      "category": "social"
+    },
+    {
+      "id": 9,
+      "agent_name": "Julia",
+      "agent_goal": "Read classic literature",
+      "agent_personality": "quiet, thoughtful",
+      "step_summary": "Read at the quiet library corner",
+      "location": "(250, 380)",
+      "recent_memories": "- Library is less crowded in afternoons\n- Currently reading Pride and Prejudice\n- Need uninterrupted time to focus",
+      "gold_explanation": "The quiet library provides the peaceful environment needed for focused reading and comprehension.",
+      "category": "routine"
+    },
+    {
+      "id": 10,
+      "agent_name": "Kevin",
+      "agent_goal": "Perfect my coffee brewing technique",
+      "agent_personality": "analytical, perfectionist",
+      "step_summary": "Visit specialty coffee shop for research",
+      "location": "(280, 180)",
+      "recent_memories": "- Barista there won regional competitions\n- Want to learn about extraction times\n- Experimenting with different beans",
+      "gold_explanation": "Learning from expert baristas accelerates skill development and provides professional insights.",
+      "category": "goal_oriented"
+    },
+    {
+      "id": 11,
+      "agent_name": "Laura",
+      "agent_goal": "Maintain community garden",
+      "agent_personality": "nurturing, dedicated",
+      "step_summary": "Check on the herb section",
+      "location": "(315, 425)",
+      "recent_memories": "- Basil needs regular pruning\n- Charlie mentioned pests last week\n- Want to ensure herbs are thriving",
+      "gold_explanation": "Regular checks help catch problems early and ensure the herb garden remains productive for the community.",
+      "category": "routine"
+    },
+    {
+      "id": 12,
+      "agent_name": "Marcus",
+      "agent_goal": "Build relationships in the neighborhood",
+      "agent_personality": "warm, helpful",
+      "step_summary": "Help neighbor move furniture",
+      "location": "(150, 250)",
+      "recent_memories": "- Bob asked for help this afternoon\n- Good chance to strengthen friendship\n- Haven't spent much time with Bob lately",
+      "gold_explanation": "Helping Bob move furniture demonstrates reliability and deepens their friendship through shared effort.",
+      "category": "social"
+    },
+    {
+      "id": 13,
+      "agent_name": "Nina",
+      "agent_goal": "Stay healthy and active",
+      "agent_personality": "motivated, consistent",
+      "step_summary": "Attend yoga class at wellness center",
+      "location": "(420, 300)",
+      "recent_memories": "- Class schedule changed to afternoons\n- Instructor teaches great flexibility techniques\n- Part of weekly fitness routine",
+      "gold_explanation": "Regular yoga classes improve flexibility and balance, essential components of overall health and wellness.",
+      "category": "routine"
+    },
+    {
+      "id": 14,
+      "agent_name": "Oliver",
+      "agent_goal": "Make every day an adventure",
+      "agent_personality": "bold, optimistic",
+      "step_summary": "Try new restaurant downtown",
+      "location": "(380, 220)",
+      "recent_memories": "- Restaurant just opened this week\n- Reviews mention unique fusion cuisine\n- Looking for new experiences",
+      "gold_explanation": "Trying the new restaurant satisfies curiosity and adds culinary adventure to the day.",
+      "category": "goal_oriented"
+    },
+    {
+      "id": 15,
+      "agent_name": "Paula",
+      "agent_goal": "Learn to paint landscapes",
+      "agent_personality": "observant, diligent",
+      "step_summary": "Sketch trees at the botanical garden",
+      "location": "(480, 380)",
+      "recent_memories": "- Need to practice drawing tree structures\n- Botanical garden has diverse species\n- Instructor emphasized studying forms",
+      "gold_explanation": "Sketching diverse tree structures at the botanical garden builds foundational skills for landscape painting.",
+      "category": "goal_oriented"
+    },
+    {
+      "id": 16,
+      "agent_name": "Quinn",
+      "agent_goal": "Read classic literature",
+      "agent_personality": "introspective, focused",
+      "step_summary": "Discuss book club selection at cafe",
+      "location": "(340, 190)",
+      "recent_memories": "- Book club meeting scheduled today\n- Finished The Great Gatsby yesterday\n- Prepared discussion notes",
+      "gold_explanation": "Book club discussions deepen understanding of literature and connect reading with social engagement.",
+      "category": "social"
+    },
+    {
+      "id": 17,
+      "agent_name": "Rachel",
+      "agent_goal": "Maintain community garden",
+      "agent_personality": "practical, knowledgeable",
+      "step_summary": "Compost food scraps at garden",
+      "location": "(305, 415)",
+      "recent_memories": "- Compost bin needs turning\n- Collected kitchen scraps this week\n- Composting improves soil quality",
+      "gold_explanation": "Regular composting enriches garden soil and supports sustainable gardening practices.",
+      "category": "routine"
+    },
+    {
+      "id": 18,
+      "agent_name": "Sam",
+      "agent_goal": "Perfect my coffee brewing technique",
+      "agent_personality": "experimental, curious",
+      "step_summary": "Test cold brew method at home",
+      "location": "(190, 310)",
+      "recent_memories": "- Read about cold brew extraction\n- Bought coarse-ground beans\n- Want to compare with hot brewing",
+      "gold_explanation": "Experimenting with cold brew expands brewing repertoire and develops comparative tasting skills.",
+      "category": "goal_oriented"
+    },
+    {
+      "id": 19,
+      "agent_name": "Tara",
+      "agent_goal": "Stay healthy and active",
+      "agent_personality": "social, energetic",
+      "step_summary": "Join group fitness class at gym",
+      "location": "(430, 280)",
+      "recent_memories": "- New instructor started this week\n- Emma said classes are motivating\n- Prefer group workouts over solo exercise",
+      "gold_explanation": "Group fitness classes combine social interaction with structured exercise, making workouts more enjoyable.",
+      "category": "routine"
+    },
+    {
+      "id": 20,
+      "agent_name": "Uma",
+      "agent_goal": "Build relationships in the neighborhood",
+      "agent_personality": "genuine, empathetic",
+      "step_summary": "Check on elderly neighbor Mrs. Chen",
+      "location": "(140, 280)",
+      "recent_memories": "- Mrs. Chen mentioned feeling lonely\n- Haven't visited in a few days\n- She enjoys afternoon tea",
+      "gold_explanation": "Regular visits with Mrs. Chen provide companionship and strengthen meaningful intergenerational connections.",
+      "category": "social"
+    },
+    {
+      "id": 21,
+      "agent_name": "Victor",
+      "agent_goal": "Make every day an adventure",
+      "agent_personality": "adventurous, curious",
+      "step_summary": "Explore hiking trail in nearby woods",
+      "location": "(520, 500)",
+      "recent_memories": "- Trail map shows scenic viewpoint\n- Weather perfect for hiking\n- Haven't explored this area before",
+      "gold_explanation": "Exploring the new trail offers physical challenge and the thrill of discovering unfamiliar natural spaces.",
+      "category": "goal_oriented"
+    },
+    {
+      "id": 22,
+      "agent_name": "Wendy",
+      "agent_goal": "Learn to paint landscapes",
+      "agent_personality": "detail-oriented, persistent",
+      "step_summary": "Study color theory at home studio",
+      "location": "(195, 320)",
+      "recent_memories": "- Struggled with color mixing last session\n- Instructor recommended theory review\n- Have reference materials ready",
+      "gold_explanation": "Studying color theory strengthens foundational knowledge essential for realistic landscape painting.",
+      "category": "routine"
+    },
+    {
+      "id": 23,
+      "agent_name": "Xavier",
+      "agent_goal": "Read classic literature",
+      "agent_personality": "disciplined, reflective",
+      "step_summary": "Morning reading session at home",
+      "location": "(170, 290)",
+      "recent_memories": "- Set daily reading goal of 50 pages\n- Currently in Moby Dick chapter 30\n- Morning mind is freshest for complex texts",
+      "gold_explanation": "Consistent morning reading sessions build literary knowledge and maintain progress toward completing classics.",
+      "category": "routine"
+    },
+    {
+      "id": 24,
+      "agent_name": "Yara",
+      "agent_goal": "Build relationships in the neighborhood",
+      "agent_personality": "organized, inclusive",
+      "step_summary": "Organize potluck dinner preparations",
+      "location": "(210, 240)",
+      "recent_memories": "- Invited 8 neighbors to potluck\n- Need to prepare dining space\n- Potlucks create warm community atmosphere",
+      "gold_explanation": "Hosting a potluck brings neighbors together in a relaxed setting, fostering community bonds.",
+      "category": "social"
+    }
+  ]
+}
+

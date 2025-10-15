@@ -1,0 +1,175 @@
+{
+  "version": "1.0",
+  "created": "2025-10-14",
+  "description": "Observation summary seeds for ObservationSummarizer DSPy module compilation",
+  "total_seeds": 20,
+  "categories": {
+    "social_interactions": 5,
+    "goal_progress": 5,
+    "environmental": 5,
+    "mixed_themes": 5
+  },
+  "seeds": [
+    {
+      "id": 1,
+      "agent_name": "Alice",
+      "agent_goal": "Build relationships in the neighborhood",
+      "observations": "• [0.85] Bob invited me to a party at 7pm tonight\n• [0.65] Carol mentioned she'll also be attending\n• [0.55] Saw Dave at the grocery store\n• [0.70] Emma asked about organizing a potluck\n• [0.60] Chatted briefly with new neighbor Frank",
+      "gold_summary": "• Received party invitation from Bob for tonight with Carol attending\n• Community interest in social gatherings (potluck idea from Emma)\n• Made initial contact with new neighbor Frank",
+      "category": "social_interactions"
+    },
+    {
+      "id": 2,
+      "agent_name": "Charlie",
+      "agent_goal": "Maintain community garden",
+      "observations": "• [0.80] Garden soil looks dry in vegetable section\n• [0.75] Tomato plants showing signs of pest damage\n• [0.60] Compost bin is ready for turning\n• [0.70] Dave offered to help with weeding\n• [0.55] Weather forecast shows rain this weekend",
+      "gold_summary": "• Urgent garden needs: water vegetables, address tomato pests\n• Dave volunteered to assist with maintenance\n• Rain expected this weekend will help with watering",
+      "category": "goal_progress"
+    },
+    {
+      "id": 3,
+      "agent_name": "Emma",
+      "agent_goal": "Make every day an adventure",
+      "observations": "• [0.75] Discovered new hiking trail behind the park\n• [0.80] Local cafe now offers live music on Fridays\n• [0.65] Basketball game happening at the court\n• [0.70] Heard about food truck festival next week\n• [0.60] New art gallery opened downtown",
+      "gold_summary": "• Multiple new adventure opportunities discovered: hiking trail, Friday live music\n• Upcoming food truck festival provides future excitement\n• Active community events available (basketball, new gallery)",
+      "category": "mixed_themes"
+    },
+    {
+      "id": 4,
+      "agent_name": "David",
+      "agent_goal": "Perfect my coffee brewing technique",
+      "observations": "• [0.85] Barista shared pour-over temperature tips\n• [0.75] Noticed bitter taste in this morning's brew\n• [0.80] Fresh beans arrived from specialty roaster\n• [0.65] Read article about grind size importance\n• [0.70] Kevin recommended trying different water ratios",
+      "gold_summary": "• Gained professional insight on pour-over temperatures from barista\n• Current challenge: eliminating bitterness in brews\n• New resources available: fresh specialty beans and grind size knowledge",
+      "category": "goal_progress"
+    },
+    {
+      "id": 5,
+      "agent_name": "Fiona",
+      "agent_goal": "Stay healthy and active",
+      "observations": "• [0.70] Completed 5k jog in good time\n• [0.65] Yoga class instructor praised my form\n• [0.55] Weather perfect for outdoor exercise\n• [0.60] Noticed improved energy levels\n• [0.75] New fitness class starting at gym next week",
+      "gold_summary": "• Strong fitness progress: completed 5k, improved yoga form\n• Feeling positive effects: increased energy\n• New opportunity: fitness class starting next week",
+      "category": "goal_progress"
+    },
+    {
+      "id": 6,
+      "agent_name": "George",
+      "agent_goal": "Build relationships in the neighborhood",
+      "observations": "• [0.80] Long conversation with Hannah about painting\n• [0.70] Ian invited me to basketball game\n• [0.60] Cafe owner remembered my usual order\n• [0.65] Helped Mrs. Chen carry groceries\n• [0.75] Quinn shared interesting book recommendations",
+      "gold_summary": "• Deepening connections: meaningful talks with Hannah and Quinn\n• Active social invitations from Ian (basketball)\n• Building rapport with local business (cafe) and helping neighbors (Mrs. Chen)",
+      "category": "social_interactions"
+    },
+    {
+      "id": 7,
+      "agent_name": "Hannah",
+      "agent_goal": "Learn to paint landscapes",
+      "observations": "• [0.85] Morning light at overlook was perfect for painting\n• [0.75] Struggled with perspective in today's sketch\n• [0.70] Found excellent reference photos of trees\n• [0.80] Online tutorial explained cloud techniques\n• [0.65] George showed interest in learning about painting",
+      "gold_summary": "• Optimal conditions achieved: perfect morning light at overlook\n• Technical challenge identified: perspective needs work\n• Learning resources gained: cloud tutorial, tree references\n• Potential teaching opportunity with George",
+      "category": "goal_progress"
+    },
+    {
+      "id": 8,
+      "agent_name": "Ian",
+      "agent_goal": "Make every day an adventure",
+      "observations": "• [0.90] Spontaneous road trip idea with Marcus\n• [0.70] Discovered secret garden behind old building\n• [0.75] Tried exotic cuisine at new restaurant\n• [0.65] Met interesting street musician\n• [0.80] Found underground speakeasy-style bar",
+      "gold_summary": "• Major adventure: road trip plan with Marcus, discovered secret garden and speakeasy\n• Culinary exploration: tried exotic new cuisine\n• Cultural encounters: connected with street musician",
+      "category": "mixed_themes"
+    },
+    {
+      "id": 9,
+      "agent_name": "Julia",
+      "agent_goal": "Read classic literature",
+      "observations": "• [0.85] Finished Pride and Prejudice, deeply moved by ending\n• [0.70] Library had first edition of Wuthering Heights\n• [0.75] Book club discussion gave new perspectives\n• [0.60] Found quiet reading spot in library corner\n• [0.65] Librarian recommended Russian literature",
+      "gold_summary": "• Completed Pride and Prejudice with emotional impact\n• Book club enhanced understanding through discussion\n• Next reading paths: first edition Wuthering Heights, Russian literature suggestions",
+      "category": "goal_progress"
+    },
+    {
+      "id": 10,
+      "agent_name": "Kevin",
+      "agent_goal": "Perfect my coffee brewing technique",
+      "observations": "• [0.80] Competition barista demonstrated extraction timing\n• [0.75] Experimented with three different grind sizes\n• [0.85] Achieved perfect cup with 1:16 ratio\n• [0.60] Coffee beans showing optimal age for brewing\n• [0.70] David shared his temperature notes",
+      "gold_summary": "• Breakthrough: achieved perfect cup with 1:16 ratio\n• Learned professional technique: extraction timing from champion\n• Systematic experimentation: tested multiple grind sizes\n• Knowledge sharing with David on temperature control",
+      "category": "goal_progress"
+    },
+    {
+      "id": 11,
+      "agent_name": "Laura",
+      "agent_goal": "Maintain community garden",
+      "observations": "• [0.75] Basil thriving after recent pruning\n• [0.80] Found ladybugs controlling aphid population\n• [0.65] Rain provided perfect watering this week\n• [0.70] Three new volunteers joined garden team\n• [0.60] Herb section ready for harvest",
+      "gold_summary": "• Garden health excellent: basil thriving, natural pest control working\n• Community growing: three new volunteers joined\n• Harvest ready in herb section, nature helping with recent rain",
+      "category": "goal_progress"
+    },
+    {
+      "id": 12,
+      "agent_name": "Marcus",
+      "agent_goal": "Build relationships in the neighborhood",
+      "observations": "• [0.85] Helped Bob move furniture, strengthened friendship\n• [0.75] Mrs. Chen invited me for tea regularly\n• [0.70] Organized impromptu game night\n• [0.80] Victor asked for advice about hiking\n• [0.65] Neighbor kids asked to play soccer",
+      "gold_summary": "• Strong bonds forming: regular tea with Mrs. Chen, deeper friendship with Bob\n• Becoming community connector: organized game night, giving advice to Victor\n• Multi-generational relationships: welcomed by neighborhood kids",
+      "category": "social_interactions"
+    },
+    {
+      "id": 13,
+      "agent_name": "Nina",
+      "agent_goal": "Stay healthy and active",
+      "observations": "• [0.80] New yoga instructor teaches advanced poses\n• [0.70] Achieved personal best in flexibility\n• [0.75] Group class energy more motivating than solo\n• [0.60] Wellness center added meditation sessions\n• [0.65] Tara suggested trying outdoor yoga",
+      "gold_summary": "• Skill advancement: personal flexibility best, learning advanced poses\n• Discovered group motivation benefits over solo practice\n• New wellness options: meditation sessions, outdoor yoga suggestion",
+      "category": "goal_progress"
+    },
+    {
+      "id": 14,
+      "agent_name": "Oliver",
+      "agent_goal": "Make every day an adventure",
+      "observations": "• [0.85] New fusion restaurant exceeded expectations\n• [0.75] Chef shared cooking technique insights\n• [0.80] Found rooftop bar with incredible sunset views\n• [0.70] Met travelers with fascinating stories\n• [0.65] Discovered pop-up art installation",
+      "gold_summary": "• Exceptional culinary adventure: fusion restaurant, learned techniques from chef\n• Discovered hidden gems: rooftop bar with sunset views\n• Cultural enrichment: traveler stories, pop-up art",
+      "category": "mixed_themes"
+    },
+    {
+      "id": 15,
+      "agent_name": "Paula",
+      "agent_goal": "Learn to paint landscapes",
+      "observations": "• [0.80] Botanical garden sketches improved tree structure understanding\n• [0.75] Instructor praised composition choices\n• [0.70] Noticed how afternoon light changes colors\n• [0.85] Successfully painted complex forest scene\n• [0.60] Wendy suggested collaboration project",
+      "gold_summary": "• Major achievement: completed complex forest scene successfully\n• Technical growth: better tree structures, composition skills\n• Light observation improving color accuracy\n• Collaboration opportunity with Wendy",
+      "category": "goal_progress"
+    },
+    {
+      "id": 16,
+      "agent_name": "Quinn",
+      "agent_goal": "Read classic literature",
+      "observations": "• [0.85] Book club discussion revealed themes I missed\n• [0.80] The Great Gatsby symbolism now clearer\n• [0.70] Xavier recommended Dostoyevsky next\n• [0.75] Found comparative literature resources\n• [0.60] Inspired to reread with new perspective",
+      "gold_summary": "• Book club deepened Gatsby understanding, revealed missed themes\n• Next reading direction: Dostoyevsky recommendation from Xavier\n• Motivated to reread with enhanced analytical perspective",
+      "category": "goal_progress"
+    },
+    {
+      "id": 17,
+      "agent_name": "Rachel",
+      "agent_goal": "Maintain community garden",
+      "observations": "• [0.75] Compost turned successfully, rich texture\n• [0.70] Soil improvement visible in plant growth\n• [0.80] Workshop on composting attracted 12 residents\n• [0.65] Kitchen scrap collection system working well\n• [0.60] Charlie praised composting results",
+      "gold_summary": "• Composting success: rich texture, visible plant improvements\n• Community education working: 12 residents attended workshop\n• Sustainable practices established with scrap collection system",
+      "category": "goal_progress"
+    },
+    {
+      "id": 18,
+      "agent_name": "Sam",
+      "agent_goal": "Perfect my coffee brewing technique",
+      "observations": "• [0.85] Cold brew experiment produced smooth result\n• [0.75] Noticed flavor differences between hot and cold extraction\n• [0.70] Friends praised cold brew at gathering\n• [0.80] Discovered optimal steeping time is 18 hours\n• [0.65] Planning to try different roast levels",
+      "gold_summary": "• Cold brew success: smooth results, optimal 18-hour steep time found\n• Comparative learning: understanding hot vs cold extraction differences\n• Social validation: positive feedback from friends\n• Next experiment: different roast levels",
+      "category": "goal_progress"
+    },
+    {
+      "id": 19,
+      "agent_name": "Tara",
+      "agent_goal": "Stay healthy and active",
+      "observations": "• [0.80] Group fitness class pushed me to new limits\n• [0.75] New instructor's motivation techniques effective\n• [0.70] Made friends with several regular class members\n• [0.65] Nina suggested trying yoga together\n• [0.60] Gym added early morning boot camp option",
+      "gold_summary": "• Fitness progress: pushed to new limits with effective instructor motivation\n• Social fitness connections: befriending class regulars, yoga plan with Nina\n• New opportunity: early morning boot camp available",
+      "category": "mixed_themes"
+    },
+    {
+      "id": 20,
+      "agent_name": "Uma",
+      "agent_goal": "Build relationships in the neighborhood",
+      "observations": "• [0.90] Mrs. Chen shared family stories over tea\n• [0.75] She mentioned feeling less lonely lately\n• [0.70] Introduced her to other neighbors\n• [0.80] She invited me to weekly tea tradition\n• [0.65] Her daughter thanked me for visiting",
+      "gold_summary": "• Deep meaningful connection formed: Mrs. Chen sharing personal stories, weekly tradition established\n• Positive impact confirmed: she feels less lonely, family appreciation\n• Bridge-building: successfully connected her with other neighbors",
+      "category": "social_interactions"
+    }
+  ]
+}
+
