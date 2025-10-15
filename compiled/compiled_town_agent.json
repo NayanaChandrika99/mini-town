@@ -1,0 +1,38 @@
+{
+  "scorer": {
+    "lm": null,
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature_instructions": "Rate how important this observation is for the agent's goals.\n\nScore 1-10 where:\n- 1-2: Trivial, background noise (e.g., \"grass is green\")\n- 3-4: Mildly interesting but not actionable\n- 5-6: Relevant to goals, worth remembering\n- 7-8: Directly impacts current plans or goals\n- 9-10: Life-changing, urgent, critical to goals",
+    "signature_prefix": "Score:",
+    "extended_signature_instructions": "Rate how important this observation is for the agent's goals.\n\nScore 1-10 where:\n- 1-2: Trivial, background noise (e.g., \"grass is green\")\n- 3-4: Mildly interesting but not actionable\n- 5-6: Relevant to goals, worth remembering\n- 7-8: Directly impacts current plans or goals\n- 9-10: Life-changing, urgent, critical to goals",
+    "extended_signature_prefix": "Score:"
+  },
+  "reflector": {
+    "lm": null,
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature_instructions": "Synthesize a high-level insight from recent memories.\n\nGenerate an abstract realization or pattern that helps the agent\nunderstand their experiences and make better decisions.",
+    "signature_prefix": "Insight:",
+    "extended_signature_instructions": "Synthesize a high-level insight from recent memories.\n\nGenerate an abstract realization or pattern that helps the agent\nunderstand their experiences and make better decisions.",
+    "extended_signature_prefix": "Insight:"
+  },
+  "planner": {
+    "lm": null,
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature_instructions": "Create a simple daily plan given goal and context.\n\nGenerate a time-blocked plan that helps the agent achieve their goals\nwhile responding to recent events and invitations.\n\nCRITICAL RULES - MUST FOLLOW EXACTLY:\n1. When invited to an event, you MUST use the EXACT TIME from the invitation\n   - If invitation says \"party at 8:15 PM\", plan MUST say \"8:15 PM\" (NOT 10:15 PM, NOT 9:15 PM)\n   - NEVER reschedule invited events to later times\n   - NEVER add buffer time before invited events\n   - If current time is past the event time, plan to go immediately\n2. Include exact coordinates in format (x, y) for all locations\n3. For introverted agents: you can plan prep time, but PRESERVE the event time\n   Example: \"8:00 PM - 8:15 PM: Prep for party, 8:15 PM - 9:00 PM: Attend party at (x,y)\"\n\nVIOLATION EXAMPLES (DO NOT DO THIS):\n\u274c Invitation: \"party at 8:15 PM\" \u2192 Plan: \"10:15 PM: Attend party\" (WRONG - rescheduled!)\n\u274c Invitation: \"party at 8:15 PM\" \u2192 Plan: \"8:00 PM: Prep, 10:15 PM: Attend\" (WRONG - changed time!)\n\nCORRECT EXAMPLES:\n\u2705 Invitation: \"party at 8:15 PM\" \u2192 Plan: \"8:15 PM - 9:00 PM: Attend party at (200, 150)\"\n\u2705 Invitation: \"party at 8:15 PM\" \u2192 Plan: \"8:00 PM - 8:15 PM: Prep, 8:15 PM - 9:00 PM: Attend party at (200, 150)\"",
+    "signature_prefix": "Plan:"
+  },
+  "action_selector": {
+    "lm": null,
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature_instructions": "Select the next immediate action from a shortlist based on plan context.",
+    "signature_prefix": "Reasoning:"
+  }
+}
