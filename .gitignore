@@ -42,3 +42,38 @@ build/
 .idea/
 *.swp
 *.swo
+
+# Documentation and analysis files
+docs/
+*.md
+!README.md
+!CLAUDE.md
+
+# Compilation and analysis outputs
+compiled/
+compilation/*.ipynb
+compilation/*.json
+compilation/*.pkl
+compilation/*.txt
+seeds/seed_analysis.ipynb
+seeds/rationale_guide.md
+
+# Demo and media files
+*.mp4
+*.mov
+*.avi
+*.webm
+demo/
+screenshots/
+
+# Test and benchmark data
+test_data/
+benchmarks/
+*.csv
+*.jsonl
+!logs/agent_events.jsonl
+
+# Claude-related files
+.claude/
+claude_conversations/
+claude_sessions/
